@@ -36,4 +36,4 @@ record_pokemon()
 #Read file content
 with open('pokemon.json', 'r') as fichier:
     pokemon_list = json.load(fichier)
-print(pokemon_list)
+print(pokemon_list[1])
