@@ -13,9 +13,20 @@ class Pokemon:
         self.type2 = type2
         self.KO = KO
   
-    def attacks(self):
-        print("attack")
+    def attack_prob(self):
+        
 
+    def degats(self, ennemyHp):
+        print("hello")
+        ennemyHp -= self.attack
+        print(f"le pokemon adverse a perdu {self.attack} hp")
+
+
+    def est_ko(self):
+        if self.lifePoint <= 0:
+            self.KO = True
+    
+            
     def display_pokemon(self):
         print(f"""   name : {self.name} ,
                     lifePoint : {self.lifePoint} ,
@@ -30,7 +41,9 @@ class Pokemon:
                     type2 : {self.type2},
                     KO : {self.KO} 
         """)
-    
+
+
+
     def level_up(self, life_point_increase, attack_increase, defense_increase):
         if self.experience >= self.limitXP:
             self.level +=1
@@ -336,3 +349,5 @@ pikachu.display_pokemon()
 pikachu.experience = 541
 pikachu.level_ups()
 pikachu.display_pokemon()
+
+print(pikachu.evolutions())
