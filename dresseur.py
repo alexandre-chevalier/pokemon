@@ -30,22 +30,3 @@ class Dresseur:
             screen.blit(texte, (50, y_offset))
             y_offset += 30
 
-class Game:
-    def __init__(self, width = 800, height = 600):
-        """Initialise la fenêtre Pygame."""
-        pygame.init()
-        self.width = width
-        self.height = height
-        self.screen = pygame.display.set_mode((self.width, self.height)) # Crée la fenêtre
-        pygame.display.set_caption("Pokémon") # Définit le titre de la fenêtre
-        self.clock = pygame.time.Clock()
-        self.running = True
-        self.state= "menu"
-        self.font = pygame.font.Font(None, 40)
-
-    def run(self):
-        """Boucle principale du jeu."""
-        while self.running:
-            self.clock.tick(60) # Limite le jeu à 60 images par secondes
-
-Game().run() # Crée une instance de la classe Game et lance la boucle principale du jeu                       
