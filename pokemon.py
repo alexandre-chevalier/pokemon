@@ -29,26 +29,14 @@ class Pokemon:
     
             
     def display_pokemon(self):
-        image = self.link_image + f"\{self.name}.png"
+        image = self.link_image 
         try:
             pokemon = pygame.image.load(image)
             print("Image loaded successfully!")
         except pygame.error as e:
             print(f"Error loading image: {e}")
         
-        print(f"""   name : {self.name} ,
-                    lifePoint : {self.lifePoint} ,
-                    level : {self.level},
-                    XP : {self.experience} ,
-                    evolution : {self.evolution} ,
-                    giveXp : {self.giveXp} ,
-                    limitXp : {self.limitXP} , 
-                    attack : {self.attack}  , 
-                    defence : {self.defence} , 
-                    type1 : {self.type1},
-                    type2 : {self.type2},
-                    KO : {self.KO} 
-        """)
+        
 
 
 
@@ -66,6 +54,9 @@ class Pokemon:
 class Pikachu(Pokemon): 
     def __init__(self, lifePoint=100, level=1, XP=0, giveXP=10, limitXP=20, attack=10, defence=8, type1="electric", type2=None):
         super().__init__("Pikachu", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
+    
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
 
     def level_ups(self):
         if self.experience >= self.limitXP and self.level == 1:
@@ -83,6 +74,9 @@ class Raichu(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="electric", type2=None ):
         super().__init__("Raichu", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -99,6 +93,9 @@ class Carapuce(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="eau", type2=None ):
         super().__init__("carapuce", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -115,6 +112,9 @@ class Carabaffe(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="eau", type2=None ):
         super().__init__("carabaffe", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -131,6 +131,9 @@ class Tortank(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="eau", type2=None ):
         super().__init__("tortank", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -147,6 +150,9 @@ class Salameche(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="feu", type2="terre" ):
         super().__init__("salameche", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -162,7 +168,10 @@ class Salameche(Pokemon):
 class Reptincelle(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="feu", type2="terre" ):
         super().__init__("reptincelle", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
-
+    
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -180,6 +189,9 @@ class Dracaufeu(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="feu", type2="vol" ):
         super().__init__("dracaufeu", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -197,6 +209,9 @@ class Bulbizarre(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="plante", type2="terre" ):
         super().__init__("bulbizarre", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -214,7 +229,10 @@ class Bulbizarre(Pokemon):
 class Herbizarre(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="plante", type2="terre" ):
         super().__init__("herbizarre", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
-
+    
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -232,6 +250,9 @@ class Florizare(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="plante", type2="terre" ):
         super().__init__("florizarre", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -248,7 +269,10 @@ class Florizare(Pokemon):
 class Lugia(Pokemon):
     def __init__(self, lifePoint=150, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=20, type1="vol", type2=None ):
         super().__init__("lugia", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
-
+    
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -265,6 +289,9 @@ class Artikodin(Pokemon):
     def __init__(self, lifePoint=175, level=1, XP=0, giveXP=120, limitXP=120, attack=30, defence=25, type1="vol", type2="glace" ):
         super().__init__("artikodin", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(40, 5, 4)
@@ -281,6 +308,9 @@ class Taupiqueur(Pokemon):
     def __init__(self, lifePoint=100, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="terre", type2=None ):
         super().__init__("taupiqueur", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -296,7 +326,10 @@ class Taupiqueur(Pokemon):
 class Triopiqueur(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="terre", type2=None ):
         super().__init__("triopiqueur", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
-
+    
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -313,6 +346,9 @@ class Rondoudou(Pokemon):
     def __init__(self, lifePoint=60, level=1, XP=0, giveXP=60, limitXP=120, attack=50, defence=25, type1="normal", type2=None ):
         super().__init__("rondoudou", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -329,6 +365,9 @@ class Grodoudou(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="normal", type2=None):
         super().__init__("grodoudou", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def display_pokemon(self):
+        return super().display_pokemon() ++ f"\{self.name}.png"
+    
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
