@@ -1,3 +1,5 @@
+import random
+import pygame
 class Pokemon:
     def __init__(self, name, lifePoint, level, XP, evolution, giveXP, limitXP,  attack, defence, type1, type2, KO):
         self.name = name
@@ -12,12 +14,11 @@ class Pokemon:
         self.type1 = type1
         self.type2 = type2
         self.KO = KO
-  
-    def attack_prob(self):
-        
+        self.link_image = r"images"
 
-    def degats(self, ennemyHp):
-        print("hello")
+
+
+    def attacks(self, ennemyHp):
         ennemyHp -= self.attack
         print(f"le pokemon adverse a perdu {self.attack} hp")
 
@@ -28,6 +29,13 @@ class Pokemon:
     
             
     def display_pokemon(self):
+        image = self.link_image + f"\{self.name}.png"
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
+        
         print(f"""   name : {self.name} ,
                     lifePoint : {self.lifePoint} ,
                     level : {self.level},
@@ -350,4 +358,4 @@ pikachu.experience = 541
 pikachu.level_ups()
 pikachu.display_pokemon()
 
-print(pikachu.evolutions())
+
