@@ -1,5 +1,9 @@
 import random
 import pygame
+import os
+
+
+
 class Pokemon:
     def __init__(self, name, lifePoint, level, XP, evolution, giveXP, limitXP,  attack, defence, type1, type2, KO):
         self.name = name
@@ -14,7 +18,7 @@ class Pokemon:
         self.type1 = type1
         self.type2 = type2
         self.KO = KO
-        self.link_image = r"images"
+        self.link_image = r"C:\\Users\\alexc\\Desktop\\laplateforme\\projet\\annee1\\pokemon\\images"
 
 
 
@@ -23,29 +27,21 @@ class Pokemon:
         print(f"le pokemon adverse a perdu {self.attack} hp")
 
 
-    def est_ko(self):
+    def is_ko(self):
         if self.lifePoint <= 0:
             self.KO = True
     
             
     def display_pokemon(self):
         image = self.link_image 
-        try:
-            pokemon = pygame.image.load(image)
-            print("Image loaded successfully!")
-        except pygame.error as e:
-            print(f"Error loading image: {e}")
-        
-        
-
-
+        return image
 
     def level_up(self, life_point_increase, attack_increase, defense_increase):
         if self.experience >= self.limitXP:
             self.level +=1
             self.limitXP *= 3
             self.experience = 0
-
+            self.giveXp +=20
             self.lifePoint  += life_point_increase
             self.attack     += attack_increase
             self.defence    += defense_increase
@@ -56,7 +52,13 @@ class Pikachu(Pokemon):
         super().__init__("Pikachu", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
     
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
+        
 
     def level_ups(self):
         if self.experience >= self.limitXP and self.level == 1:
@@ -75,7 +77,13 @@ class Raichu(Pokemon):
         super().__init__("Raichu", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
+        
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -94,7 +102,12 @@ class Carapuce(Pokemon):
         super().__init__("carapuce", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -113,7 +126,12 @@ class Carabaffe(Pokemon):
         super().__init__("carabaffe", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -132,7 +150,12 @@ class Tortank(Pokemon):
         super().__init__("tortank", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -151,7 +174,12 @@ class Salameche(Pokemon):
         super().__init__("salameche", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -170,7 +198,12 @@ class Reptincelle(Pokemon):
         super().__init__("reptincelle", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
     
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -190,7 +223,12 @@ class Dracaufeu(Pokemon):
         super().__init__("dracaufeu", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -210,7 +248,12 @@ class Bulbizarre(Pokemon):
         super().__init__("bulbizarre", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -231,7 +274,12 @@ class Herbizarre(Pokemon):
         super().__init__("herbizarre", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
     
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -251,7 +299,12 @@ class Florizare(Pokemon):
         super().__init__("florizarre", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -271,7 +324,12 @@ class Lugia(Pokemon):
         super().__init__("lugia", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
     
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -290,7 +348,12 @@ class Artikodin(Pokemon):
         super().__init__("artikodin", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -309,7 +372,12 @@ class Taupiqueur(Pokemon):
         super().__init__("taupiqueur", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -328,7 +396,12 @@ class Triopiqueur(Pokemon):
         super().__init__("triopiqueur", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
     
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -347,7 +420,12 @@ class Rondoudou(Pokemon):
         super().__init__("rondoudou", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
@@ -366,7 +444,12 @@ class Grodoudou(Pokemon):
         super().__init__("grodoudou", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
     def display_pokemon(self):
-        return super().display_pokemon() ++ f"\{self.name}.png"
+        image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
+        try:
+            pokemon = pygame.image.load(image)
+            print("Image loaded successfully!")
+        except pygame.error as e:
+            print(f"Error loading image: {e}")
     
     def level_ups(self):
         if self.experience > self.limitXP and self.level == 1:
