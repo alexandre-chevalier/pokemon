@@ -3,7 +3,6 @@ import pygame
 import os
 
 
-
 class Pokemon:
     def __init__(self, name, lifePoint, level, XP, evolution, giveXP, limitXP,  attack, defence, type1, type2, KO):
         self.name = name
@@ -19,10 +18,10 @@ class Pokemon:
         self.type2 = type2
         self.KO = KO
         self.link_image = r"C:\\Users\\alexc\\Desktop\\laplateforme\\projet\\annee1\\pokemon\\images"
-
-
+        self.statut = "normal"
 
     def attacks(self, ennemyHp):
+
         ennemyHp -= self.attack
         print(f"le pokemon adverse a perdu {self.attack} hp")
 
@@ -31,9 +30,28 @@ class Pokemon:
         if self.lifePoint <= 0:
             self.KO = True
     
+    def to_dict(self):
+        dict_poke = {
+                        "name": self.name,
+                        "lifePoint": self.lifePoint,
+                        "level": self.level,
+                        "XP": self.experience,
+                        "evolution": self.evolution,
+                        "giveXp": self.giveXp,
+                        "limitXp": self.limitXP,
+                        "attack": self.attack,
+                        "defence": self.defence,
+                        "type1": self.type1,
+                        "type2": self.type2,
+                        "KO": self.KO,
+                        "statut": self.statut
+                    }
+        return dict_poke
+
             
     def display_pokemon(self):
         image = self.link_image 
+        
         return image
 
     def level_up(self, life_point_increase, attack_increase, defense_increase):
@@ -51,6 +69,9 @@ class Pikachu(Pokemon):
     def __init__(self, lifePoint=100, level=1, XP=0, giveXP=10, limitXP=20, attack=10, defence=8, type1="electric", type2=None):
         super().__init__("Pikachu", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
     
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -58,8 +79,7 @@ class Pikachu(Pokemon):
             print("Image loaded successfully!")
         except pygame.error as e:
             print(f"Error loading image: {e}")
-        
-
+            
     def level_ups(self):
         if self.experience >= self.limitXP and self.level == 1:
             super().level_up(20, 5, 4)
@@ -76,6 +96,9 @@ class Raichu(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="electric", type2=None ):
         super().__init__("Raichu", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -100,7 +123,10 @@ class Raichu(Pokemon):
 class Carapuce(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="eau", type2=None ):
         super().__init__("carapuce", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
-
+    
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -125,6 +151,9 @@ class Carabaffe(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="eau", type2=None ):
         super().__init__("carabaffe", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -149,6 +178,9 @@ class Tortank(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="eau", type2=None ):
         super().__init__("tortank", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -173,6 +205,9 @@ class Salameche(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="feu", type2="terre" ):
         super().__init__("salameche", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -196,6 +231,9 @@ class Salameche(Pokemon):
 class Reptincelle(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="feu", type2="terre" ):
         super().__init__("reptincelle", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
+    
+    def to_dict(self):
+        return super().to_dict()
     
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
@@ -221,7 +259,10 @@ class Reptincelle(Pokemon):
 class Dracaufeu(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="feu", type2="vol" ):
         super().__init__("dracaufeu", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
-
+    
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -247,6 +288,9 @@ class Bulbizarre(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="plante", type2="terre" ):
         super().__init__("bulbizarre", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -273,6 +317,9 @@ class Herbizarre(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="plante", type2="terre" ):
         super().__init__("herbizarre", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
     
+    def to_dict(self):
+        return super().to_dict()
+        
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -298,6 +345,9 @@ class Florizare(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="plante", type2="terre" ):
         super().__init__("florizarre", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -322,6 +372,9 @@ class Florizare(Pokemon):
 class Lugia(Pokemon):
     def __init__(self, lifePoint=150, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=20, type1="vol", type2=None ):
         super().__init__("lugia", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
+
+    def to_dict(self):
+        return super().to_dict()
     
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
@@ -347,6 +400,9 @@ class Artikodin(Pokemon):
     def __init__(self, lifePoint=175, level=1, XP=0, giveXP=120, limitXP=120, attack=30, defence=25, type1="vol", type2="glace" ):
         super().__init__("artikodin", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -371,6 +427,9 @@ class Taupiqueur(Pokemon):
     def __init__(self, lifePoint=100, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="terre", type2=None ):
         super().__init__("taupiqueur", lifePoint, level, XP, True, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -394,6 +453,9 @@ class Taupiqueur(Pokemon):
 class Triopiqueur(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="terre", type2=None ):
         super().__init__("triopiqueur", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
+    
+    def to_dict(self):
+        return super().to_dict()
     
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
@@ -419,6 +481,9 @@ class Rondoudou(Pokemon):
     def __init__(self, lifePoint=60, level=1, XP=0, giveXP=60, limitXP=120, attack=50, defence=25, type1="normal", type2=None ):
         super().__init__("rondoudou", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -443,6 +508,9 @@ class Grodoudou(Pokemon):
     def __init__(self, lifePoint=250, level=1, XP=0, giveXP=60, limitXP=120, attack=30, defence=25, type1="normal", type2=None):
         super().__init__("grodoudou", lifePoint, level, XP, False, giveXP, limitXP, attack, defence, type1, type2, False)
 
+    def to_dict(self):
+        return super().to_dict()
+    
     def display_pokemon(self):
         image = os.path.join(super().display_pokemon() + f"\\{self.name}.png")
         try:
@@ -462,22 +530,8 @@ class Grodoudou(Pokemon):
             super().level_up(60, 30, 12)
         elif self.experience > self.limitXP and self.level == 5:
             super().level_up(60, 30, 15)
-    
 
 
 pikachu = Pikachu()
-pikachu.display_pokemon()
-pikachu.experience = 25
-pikachu.level_ups()
-pikachu.display_pokemon()
-pikachu.experience = 61
-pikachu.level_ups()
-pikachu.display_pokemon()
-pikachu.experience = 181
-pikachu.level_ups()
-pikachu.display_pokemon()
-pikachu.experience = 541
-pikachu.level_ups()
-pikachu.display_pokemon()
 
-
+print(pikachu.to_dict())
