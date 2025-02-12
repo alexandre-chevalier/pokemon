@@ -1,31 +1,38 @@
 import json
+from alex import Pikachu
+from alex import Carapuce
 
 # entries structures => "pokemon" : {"name" : "", "lifepoint": 10,"level": 1, "experience": 0, "attack": 1, "defense" : 1, "type": ""}
 class Pokemon_bank:
     def __init__ (self, name):
         self.name = name
-        self.pokemon_list = []
+        self.pokemon_list =[]
 
 #Record entry in pokemon.json
     def record_pokemon(self):
-        with open('pokemon.json', 'w') as fichier:
+        with open('pokemon2.json', 'w') as fichier:
             json.dump(self.pokemon_list, fichier,indent=4)
 
     
     def get_pokemon_list(self):
         try:
-            with open('pokemon.json', 'r') as fichier:
+            with open('pokemon2.json', 'r') as fichier:
                 pokemon_list = json.load(fichier)
         except FileNotFoundError:
                 pokemon_list = []
         return pokemon_list
-#
+
 #  Build the list updated
-    def add_to_list(self,new_pokemon):
-        if new_pokemon not in pokemon_list:
-            self.pokemon_list.append(new_pokemon) 
+    def add_to_list(self, new_pokemon):
+
+        new_pokemon_dict = new_pokemon.to_dict()
+
+        # Vérifie si le Pokémon existe déjà dans la liste
+        if new_pokemon_dict not in self.pokemon_list:
+            self.pokemon_list.append(new_pokemon_dict)
+            self.record_pokemon()  # Enregistre la liste mise à jour
         else:
-            return print('Ce pokemon est déjà dans votre pokedex')
+            print('Ce pokemon est déjà dans votre pokedex')
 
 #name, lifePoint, level, XP, evolution, giveXP, limitXP,  attack, defence, type1, type2,
     
@@ -45,22 +52,6 @@ class Pokemon_bank:
         
 
 
-pikachu = { "name" : "Pikachu", "lifepoint": 10,"level": 1, 
-                             "experience": 0, "attack": 1, "defense" : 1, "type": "Electrique"}
- 
-
-lugia =  { "name" : "Lugia", "lifepoint": 10,"level": 1, 
-                             "experience": 0, "attack": 1, "defense" : 1, "type": "Air"}
- 
-
-salameche = {"name" : "Salameche", "lifepoint": 10,"level": 1, 
-                             "experience": 0, "attack": 1, "defense" : 1, "type": "Feu"}
-
-carapuce = {"name" : "Carapuce", "lifepoint": 10,"level": 1, 
-                             "experience": 0, "attack": 1, "defense" : 1, "type": "Feu"}
-roudoudou = {"name" : "Roudoudou", "lifepoint": 10,"level": 1, 
-                             "experience": 0, "attack": 1, "defense" : 1, "type": "Feu"}
-
 
 
 
@@ -68,27 +59,17 @@ roudoudou = {"name" : "Roudoudou", "lifepoint": 10,"level": 1,
 """ Building a Bank using the Pokemon_Bank class"""
 
 # a new Pokemon_Bank instance
-original_bank = Pokemon_bank("Pokemon Bank")
-
-# Test le contenu de la liste
-pokemon_list= original_bank.get_pokemon_list()
-print(pokemon_list)
-
-# records in a list with class method
-original_bank.add_to_list(pikachu)
-original_bank.add_to_list(lugia)
-original_bank.add_to_list(salameche)
-original_bank.add_to_list(carapuce)
-original_bank.add_to_list(roudoudou)
-
-# Add a new Pokemon, created by the player
-original_bank.add_pokemon()
-
-# Record the list in The Json File
-original_bank.record_pokemon()
 
 
-#Read file content
-with open('pokemon.json', 'r') as fichier:
-    pokemon_list = json.load(fichier)
-print(pokemon_list)
+
+pokemon = Pokemon_bank("original_bank")
+
+pikachu = Pikachu()
+
+carapuce =Carapuce()
+
+
+pokemon.add_to_list(pikachu)
+pokemon.add_to_list(carapuce)
+list_poke = pokemon.get_pokemon_list()
+print(list_poke)
