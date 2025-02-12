@@ -1,6 +1,9 @@
 import json
-from alex import Pikachu
-from alex import Carapuce
+from alex import * 
+import os
+
+BASE_DIR = r"C:\Users\Windows\Desktop\projets\1a\pokemon"
+IMAGE_DIR = os.path.join(BASE_DIR, "images")
 
 # entries structures => "pokemon" : {"name" : "", "lifepoint": 10,"level": 1, "experience": 0, "attack": 1, "defense" : 1, "type": ""}
 class Pokemon_bank:
@@ -10,13 +13,13 @@ class Pokemon_bank:
 
 #Record entry in pokemon.json
     def record_pokemon(self):
-        with open('pokemon2.json', 'w') as fichier:
+        with open('pokemon_list.json', 'w') as fichier:
             json.dump(self.pokemon_list, fichier,indent=4)
 
     
     def get_pokemon_list(self):
         try:
-            with open('pokemon2.json', 'r') as fichier:
+            with open('pokemon_list.json', 'r') as fichier:
                 pokemon_list = json.load(fichier)
         except FileNotFoundError:
                 pokemon_list = []
@@ -51,25 +54,23 @@ class Pokemon_bank:
         print(f"{name} a été ajouté !") 
         
 
-
-
-
-
-
-""" Building a Bank using the Pokemon_Bank class"""
-
 # a new Pokemon_Bank instance
-
-
-
 pokemon = Pokemon_bank("original_bank")
 
 pikachu = Pikachu()
-
 carapuce =Carapuce()
+salameche =Salameche()
+bulbizarre = Bulbizarre()
+lugia = Lugia()
+artikodin = Artikodin()
+triopiqueur =Triopiqueur()
 
 
 pokemon.add_to_list(pikachu)
 pokemon.add_to_list(carapuce)
+pokemon.add_to_list(salameche)
+pokemon.add_to_list(bulbizarre)
+pokemon.add_to_list(artikodin)
+pokemon.add_to_list(triopiqueur)
 list_poke = pokemon.get_pokemon_list()
 print(list_poke)
