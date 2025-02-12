@@ -29,4 +29,5 @@ class Dresseur:
             texte = font.render(f"{pokemon.nom} - PV: {pokemon.pv}/{pokemon.pv_max}", True, (255, 255, 255))
             screen.blit(texte, (50, y_offset))
             y_offset += 30
+            
 
