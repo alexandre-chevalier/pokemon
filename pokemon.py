@@ -66,8 +66,22 @@ class Pokemon:
             self.KO = True
     
     def to_dict(self):
-        dictio = vars(self)
-        return dictio
+        return {
+            'name': self.name,
+            'lifePoint': self.lifePoint,
+            'level': self.level,
+            'experience': self.experience,
+            'giveXp': self.giveXp,
+            'limitXP': self.limitXP,
+            'attack': self.attack,
+            'defence': self.defence,
+            'type1': self.type1,
+            'type2': self.type2,
+            'KO': self.KO,
+            'link_image': self.link_image,
+            'statut': self.statut,
+            'next_evolution': self.next_evolution.to_dict() if isinstance(self.next_evolution, Pokemon) else None
+        }
 
 
     def level_up(self):
@@ -115,4 +129,18 @@ triopiqueur = Pokemon("triopiqueur",250,1, 0, 60,120,30,25, "terre", None, None)
 taupiqueur = Pokemon("triopiqueur", 100, 1,0, 60, 120, 30, 25, "terre", None,triopiqueur )
 grodoudou = Pokemon("grodoudou", 250, 1, 0, 60, 120, 30, 25, "normal", None,None)
 rondoudou = Pokemon("rondoudou", 60, 1, 0, 60, 120, 50, 25, "normal", None,grodoudou)
+grotadmorv = Pokemon("grotadmorv", 175, 1,0, 100, 120, 30, 20,"vol", None, None)
+tadmorv = Pokemon("tadmorv", 120, 1,0, 100, 120, 30, 20,"poison", None, grotadmorv)
+ronflex = Pokemon("triopiqueur",250,1, 0, 60,120,30,25, "terre", None, None)
+hoho = Pokemon("hoho", 200, 1,0, 100, 120, 30, 20,"vol", "feu", None)
 
+
+
+
+print(rondoudou.to_dict())
+
+rondoudou.level = 5
+
+rondoudou.level_up()
+
+print(rondoudou.to_dict())
