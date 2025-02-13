@@ -1,5 +1,5 @@
 import json
-from alex import * 
+from pokemon import * 
 import os
 
 BASE_DIR = r"C:\Users\Windows\Desktop\projets\1a\pokemon"

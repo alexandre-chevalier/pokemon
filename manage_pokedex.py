@@ -35,10 +35,6 @@ class Pokedex:
                 self.pokedex_list = []
         return self.pokedex_list
     
-    
-
-
-
 
 
 # Pokedex instance
