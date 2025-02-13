@@ -1,12 +1,7 @@
 import json
 import pygame
 import os
-pygame.init()
-pygame.font.init()
-from menu import *
 
-
-# Screen size
 BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
 
 # ways to files
@@ -15,13 +10,13 @@ SOUND_DIR = os.path.join(BASE_DIR, "sounds")
 
 # Pygame start
 pygame.init()
-pygame.font.init()
+
 # Screen size
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
 
 # background
-background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'glory.png')) 
+background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'forest_ring.webp')) 
 background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Colors used
@@ -39,19 +34,11 @@ class History:
 
         pygame.font.init()  # S'assurer que le module de police est bien initialisé
         self.title_font = pygame.font.Font(font_path, 70)
-        self.poke_font = pygame.font.Font(font_path, 36)
+        self.poke_font = pygame.font.Font(font_path, 70)
 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon")
-
-   # def scores_history(BASE_DIR):
-    #    score_hist= []
-     #   with open (os.path.join(BASE_DIR,"score.json"), "r") as f:
-      #          player_list= json.load(f)      
-      #  for i, player in enumerate(player_list):
-       # score_hist.append(f'{i+1}. {player["name"]} => {player["score"]}')
-        #return score_hist   
-
+    
     def display_title(self):
         title_text = self.title_font.render("Scoreboard", True, RED)
         title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 50))
@@ -73,7 +60,7 @@ class History:
         return back_button_rect
 
     
-    def record_history(score, player_name):
+    def record_history(self,score, player_name):
             
             try:
                 with open("players.json", "r") as f:
@@ -104,7 +91,7 @@ class History:
             with open("players.json", "w") as f:
                 json.dump(players_container, f, indent=4)  # indent=4 pour un formatage lisible
 
-    def get_player_history():
+    def get_player_history(self):
         with open ("players.json", "r") as file:
             players_container = json.load(file)      
     
@@ -130,6 +117,5 @@ class History:
             
     pygame.quit()
 
-# Créer une instance de la classe History et lancer la méthode run
-history = History("players.json")
-history.run()
+new = History("players.json")
+new.run()
