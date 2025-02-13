@@ -20,7 +20,18 @@ class Pokemon:
         self.next_evolution = next_evolution
 
     def evolve(self, pokemon):
-        return pokemon
+        if pokemon:
+            self.name = pokemon.name
+            self.lifePoint = pokemon.lifePoint
+            self.level = pokemon.level
+            self.experience = pokemon.experience
+            self.giveXp =  pokemon.giveXp
+            self.limitXP = pokemon.limitXP
+            self.attack = pokemon.attack
+            self.defence = pokemon.defence
+            self.type1 = pokemon.type1
+            self.type2 = pokemon.type2
+            self.next_evolution = pokemon.next_evolution
 
     def attacks(self, ennemyHp):
         coeff = 0.8
@@ -37,7 +48,11 @@ class Pokemon:
 
 
     def display_pokemon(self):
-        image = os.path.join(self.link_image + f"{self.name}.png")
+        try:
+            image = os.path.join(self.link_image + f"{self.name}.png")
+        except FileNotFoundError:
+            image = os.path.join(self.link_image + "default.png")
+
         print(image)
         try:
             pokemon = pygame.image.load(image)
@@ -67,6 +82,21 @@ class Pokemon:
         
         if self.level == 5:
             self.evolve(self.next_evolution)
+    
+    def __str__(self):
+            print(f"""
+                name : {self.name}
+                lifepoint : {self.lifePoint}
+                level : {self.level}
+                xp : {self.experience}
+                giveXp : {self.giveXp}
+                limitXp : {self.limitXP}
+                attack : {self.attack}
+                defence : {self.defence}
+                type1 : {self.type1}
+                type2 : {self.type2}
+                next_evolution : {self.next_evolution}
+                """)
 
 raichu = Pokemon("raichu", 250, 1, 0, 100, 120, 30,25, "elecetric", None, None)
 pikachu = Pokemon("Pikachu", 100, 1, 0, 10, 20,10, 8, "electric", None, raichu)
@@ -86,6 +116,3 @@ taupiqueur = Pokemon("triopiqueur", 100, 1,0, 60, 120, 30, 25, "terre", None,tri
 grodoudou = Pokemon("grodoudou", 250, 1, 0, 60, 120, 30, 25, "normal", None,None)
 rondoudou = Pokemon("rondoudou", 60, 1, 0, 60, 120, 50, 25, "normal", None,grodoudou)
 
-
-
-print(pikachu.to_dict())
