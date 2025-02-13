@@ -1,6 +1,6 @@
 import pygame
 import os
-
+from manage_players import *
 BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
 
 # ways to files
@@ -84,6 +84,9 @@ class Menu:
                         if button_rect.collidepoint(mouse_pos):
                             if option == "Exit":
                                 running = False
+                            elif option == "Scoreboard":
+                                history = History("players.json")
+                                history.run()
                             else:
                                 print(f"{option} sélectionné")
         
