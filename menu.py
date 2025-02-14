@@ -1,96 +1,98 @@
 import pygame
-from player import Player
-from pokemon import Pokemon
+import os
+from manage_players import *
+BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
+
+# ways to files
+IMAGE_DIR = os.path.join(BASE_DIR, "images")
+SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+
+# Pygame start
+pygame.init()
+
+# Screen size
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 600
+
+# background
+background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'forest_ring.webp')) 
+background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Colors used
+BLACK = (0, 0, 0)
+YELLOW = (255, 223, 0)
+WHITE = (255, 255, 255)
+DARK_BLUE = (0, 0, 128)
+RED = (250, 0, 0)
 
 class Menu:
-    def __init__(self, player, screen):
-        self.player = player
-        self.screen = screen
-        self.font = pygame.font.Font(None, 36)
+    def __init__(self):
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Pokemon")
+        
+        # Polices
+        self.title_font = pygame.font.Font(os.path.join(BASE_DIR, "Audiowide-Regular.ttf"), 70)
+        self.poke_font = pygame.font.Font(os.path.join(BASE_DIR, "Audiowide-Regular.ttf"), 36)
+        
+        # Options du menu
+        self.menu_options = ["Play now", "History", "Scoreboard", "Exit"]
+        self.buttons = []
+        self.create_buttons()
 
-    def display_menu(self):
-        menu_running = True
-        while menu_running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    menu_running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_1:
-                        self.display_team()
-                    elif event.key == pygame.K_2:
-                        self.choose_pokemon()
-                    elif event.key == pygame.K_3:
-                        menu_running = False
+    def create_buttons(self):
+        button_width = 400  
+        button_height = 50  
+        y_position = 250  # first button position
+        
+        for option in self.menu_options:
+            text = self.poke_font.render(option, True, RED)
+            text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, y_position))
+            button_rect = pygame.Rect(SCREEN_WIDTH // 2 - button_width // 2, text_rect.y - button_height // 2, button_width, button_height)
+            
+            # text on button position
+            text_rect.center = button_rect.center
+            
+            self.buttons.append((option, button_rect, text, text_rect))
+            y_position += 80  # space between ech button
 
-            self.screen.fill((0, 0, 0))
-            self.display_text("Main Menu", 40, (255, 255, 255), 600, 100)
-            self.display_text("1. Display Pokémon Team", 30, (255, 255, 255), 600, 200)
-            self.display_text("2. Choose Pokémon for Battle", 30, (255, 255, 255), 600, 250)
-            self.display_text("3. Exit", 30, (255, 255, 255), 600, 300)
+    def draw_buttons(self):
+        for _, button_rect, text, text_rect in self.buttons:
+            # Button shape
+            pygame.draw.rect(self.screen, YELLOW, button_rect, border_radius=15)  
+            self.screen.blit(text, text_rect)
+
+    def display_title(self):
+        title_text = self.title_font.render("Pokemon", True, DARK_BLUE)
+        title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 100))
+        self.screen.blit(title_text, title_rect)
+
+    def run(self):
+        running = True
+        while running:
+            self.screen.blit(background_image, (0, 0))  # Background
+            self.display_title()
+            self.draw_buttons()
             pygame.display.flip()
 
-    def display_team(self):
-        self.screen.fill((0, 0, 0))
-        self.display_text(f"{self.player.name}'s Pokémon Team:", 40, (255, 255, 255), 600, 50)
-        y_offset = 100
-        for pokemon in self.player.pokemons:
-            self.display_text(str(pokemon), 30, (255, 255, 255), 600, y_offset)
-            y_offset += 50
-        pygame.display.flip()
-        pygame.time.wait(3000)
-
-    def choose_pokemon(self):
-        choosing = True
-        while choosing:
-            self.screen.fill((0, 0, 0))
-            self.display_text("Choose a Pokémon for Battle:", 40, (255, 255, 255), 600, 50)
-            y_offset = 100
-            pokemon_rects = []
-            for pokemon in self.player.pokemons:
-                image = pygame.image.load(pokemon.link_image)
-                image = pygame.transform.scale(image, (100, 100))
-                image_rect = image.get_rect(center=(600, y_offset + 50))
-                self.screen.blit(image, image_rect)
-                text_surface, text_rect = self.display_text(pokemon.name, 30, (255, 255, 255), 600, y_offset)
-                pokemon_rects.append((pokemon, image_rect))
-                y_offset += 150
-            pygame.display.flip()
-
+            # Events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    choosing = False
+                    running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = event.pos
-                    for pokemon, rect in pokemon_rects:
-                        if rect.collidepoint(mouse_pos):
-                            self.screen.fill((0, 0, 0))
-                            self.display_text(f"Chosen Pokémon: {pokemon.name}", 30, (255, 255, 255), 600, 400)
-                            pygame.display.flip()
-                            pygame.time.wait(3000)
-                            choosing = False
-                            break
+                    mouse_pos = pygame.mouse.get_pos()
+                    for option, button_rect, _, _ in self.buttons:
+                        if button_rect.collidepoint(mouse_pos):
+                            if option == "Exit":
+                                running = False
+                            elif option == "Scoreboard":
+                                history = History("players.json")
+                                history.run()
+                            else:
+                                print(f"{option} sélectionné")
+        
+        pygame.quit()
 
-    def display_text(self, text, size, color, x, y):
-        font = pygame.font.Font(None, size)
-        text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect(center=(x, y))
-        self.screen.blit(text_surface, text_rect)
-        return text_surface, text_rect
-
-# Example usage
+# Lancer le menu
 if __name__ == "__main__":
-    pygame.init()
-    screen = pygame.display.set_mode((1200, 600))
-    pygame.display.set_caption("Pokemon Menu")
-
-    player = Player("Ash")
-    pikachu = Pokemon("Pikachu", 100, 1, 0, 10, 20, 10, 8, "electric", None, None)
-    charmander = Pokemon("Charmander", 100, 1, 0, 10, 20, 10, 8, "fire", None, None)
-
-    player.add_pokemon(pikachu)
-    player.add_pokemon(charmander)
-
-    menu = Menu(player, screen)
-    menu.display_menu()
-
-    pygame.quit()
+    menu = Menu()
+    menu.run()
