@@ -1,4 +1,3 @@
-import random
 import pygame
 import os
 
@@ -19,6 +18,8 @@ class Pokemon:
         self.statut = "normal"
         self.next_evolution = next_evolution
 
+    
+
     def evolve(self, pokemon):
         if pokemon:
             self.name = pokemon.name
@@ -33,27 +34,15 @@ class Pokemon:
             self.type2 = pokemon.type2
             self.next_evolution = pokemon.next_evolution
 
-    def attacks(self, ennemyHp):
-        coeff = 0.8
-        damage = [self.attack, 0]
-        coeffs = [coeff, 1-coeff]
-        dmg = random.choices(damage, coeffs)
-        ennemyHp.lifePoint -= dmg[0]
-        if dmg[0] == 0:
-            print("votre pokemon a louper son attaque")
-        else:
-            print(f"le pokemon adverse a perdu {self.attack} hp")
 
-        return ennemyHp
-
+    def attacks(self):
+        return (self.attack, self.defence)
 
     def display_pokemon(self):
         try:
             image = os.path.join(self.link_image + f"{self.name}.png")
         except FileNotFoundError:
             image = os.path.join(self.link_image + "default.png")
-
-        print(image)
         try:
             pokemon = pygame.image.load(image)
             print("Image loaded successfully!")
@@ -83,8 +72,7 @@ class Pokemon:
             'next_evolution': self.next_evolution.to_dict() if isinstance(self.next_evolution, Pokemon) else None
         }
 
-
-    def level_up(self):
+    def level_up(self, opponent):
         if self.experience >= self.limitXP:
             self.level +=1
             self.limitXP *= 3
@@ -93,12 +81,14 @@ class Pokemon:
             self.lifePoint  += 100
             self.attack     += 25
             self.defence    += 10
-        
+        elif self.experience < self.limitXP:
+            self.experience += opponent.giveXp
+
         if self.level == 5:
             self.evolve(self.next_evolution)
     
     def __str__(self):
-            print(f"""
+            return f"""
                 name : {self.name}
                 lifepoint : {self.lifePoint}
                 level : {self.level}
@@ -110,9 +100,9 @@ class Pokemon:
                 type1 : {self.type1}
                 type2 : {self.type2}
                 next_evolution : {self.next_evolution}
-                """)
+                """
 
-raichu = Pokemon("raichu", 250, 1, 0, 100, 120, 30,25, "elecetric", None, None)
+raichu = Pokemon("raichu", 250, 1, 0, 100, 120, 30,25, "electric", None, None)
 pikachu = Pokemon("Pikachu", 100, 1, 0, 10, 20,10, 8, "electric", None, raichu)
 tortank = Pokemon("tortank", 250, 1, 0, 100, 120, 30,25, "eau", None, None)
 carabaffe = Pokemon("carabaffe", 175, 1, 0, 60, 120, 30, 25, "eau", None, tortank)
@@ -129,18 +119,7 @@ triopiqueur = Pokemon("triopiqueur",250,1, 0, 60,120,30,25, "terre", None, None)
 taupiqueur = Pokemon("triopiqueur", 100, 1,0, 60, 120, 30, 25, "terre", None,triopiqueur )
 grodoudou = Pokemon("grodoudou", 250, 1, 0, 60, 120, 30, 25, "normal", None,None)
 rondoudou = Pokemon("rondoudou", 60, 1, 0, 60, 120, 50, 25, "normal", None,grodoudou)
-grotadmorv = Pokemon("grotadmorv", 175, 1,0, 100, 120, 30, 20,"vol", None, None)
+grotadmorv = Pokemon("grotadmorv", 175, 1,0, 100, 120, 30, 20,"poison", None, None)
 tadmorv = Pokemon("tadmorv", 120, 1,0, 100, 120, 30, 20,"poison", None, grotadmorv)
 ronflex = Pokemon("triopiqueur",250,1, 0, 60,120,30,25, "terre", None, None)
 hoho = Pokemon("hoho", 200, 1,0, 100, 120, 30, 20,"vol", "feu", None)
-
-
-
-
-print(rondoudou.to_dict())
-
-rondoudou.level = 5
-
-rondoudou.level_up()
-
-print(rondoudou.to_dict())
