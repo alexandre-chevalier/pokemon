@@ -5,12 +5,12 @@ pygame.init()
 pygame.font.init()
 
 # Screen size
-BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ways to files
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 SOUND_DIR = os.path.join(BASE_DIR, "sounds")
-
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 # Pygame start
 pygame.init()
 pygame.font.init()
@@ -30,7 +30,7 @@ WHITE = (255, 255, 255)
 DARK_BLUE = (0, 0, 128)
 RED = (250, 0, 0)
 
-font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
+font_path = os.path.join(ASSETS_DIR, "Audiowide-Regular.ttf")
 
 class History:
     def __init__(self, players_file):

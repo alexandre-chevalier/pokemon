@@ -1,7 +1,9 @@
 import pygame
 import os
 from manage_players import *
-BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
+
+# Define BASE_DIR comme le dossier du fichier actuel
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ways to files
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
@@ -15,7 +17,9 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
 
 # background
-background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'forest_ring.webp')) 
+# Charger une image correctement avec BASE_DIR
+background_image_path = os.path.join(IMAGE_DIR, "forest_ring.webp")
+background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Colors used
@@ -31,8 +35,8 @@ class Menu:
         pygame.display.set_caption("Pokemon")
         
         # Polices
-        self.title_font = pygame.font.Font(os.path.join(BASE_DIR, "Audiowide-Regular.ttf"), 70)
-        self.poke_font = pygame.font.Font(os.path.join(BASE_DIR, "Audiowide-Regular.ttf"), 36)
+        self.title_font = pygame.font.Font(os.path.join(ASSETS_DIR, "Audiowide-Regular.ttf"), 70)
+        self.poke_font = pygame.font.Font(os.path.join(ASSETS_DIR, "Audiowide-Regular.ttf"), 36)
         
         # Options du menu
         self.menu_options = ["Play now", "History", "Scoreboard", "Exit"]
