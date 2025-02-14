@@ -15,7 +15,7 @@ class Combat:
             with open(self.pokedex_file, 'r') as file:
                 self.pokedex = json.load(file)
         else:
-            self.pokedex = {}
+            self.pokedex = []
 
     def save_pokedex(self):
         """Sauvegarde le Pokédex dans le fichier JSON."""
@@ -61,6 +61,7 @@ class Combat:
             print(f"{self.player_pokemon.name} attaque {self.opponent_pokemon.name} et inflige {damage} points de dégâts.")
             if self.opponent_pokemon.KO:
                 print(f"{self.opponent_pokemon.name} est KO!")
+                Pokemon.level_up(self.player_pokemon)
                 break
 
             # Tour de l'adversaire
@@ -71,14 +72,14 @@ class Combat:
                 break
 
         # Enregistrement des Pokémon dans le Pokédex
-        #self.record_pokemon(self.player_pokemon)
-        #self.record_pokemon(self.opponent_pokemon)
+        self.record_pokemon(self.player_pokemon)
+        self.record_pokemon(self.opponent_pokemon)
         self.save_pokedex()
 
-    #def record_pokemon(self, pokemon):
-       # """Enregistre un Pokémon dans le Pokédex si ce n'est pas déjà fait."""
-       # if pokemon.name not in self.pokedex:
-          #  self.pokedex[pokemon.name] = pokemon.to_dict()
+    def record_pokemon(self, pokemon):
+        """Enregistre un Pokémon dans le Pokédex si ce n'est pas déjà fait."""
+        if pokemon.name not in self.pokedex:
+            self.pokedex.append()
 
     def menu(self):
         while True:
