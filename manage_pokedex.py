@@ -1,7 +1,37 @@
-import random
 import json
+import pygame
+import os
+import random
 
-""" Manage POKEDEX Json file """
+# Pygame start
+pygame.init()
+pygame.font.init()
+# Screen size
+BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
+
+# ways to files
+IMAGE_DIR = os.path.join(BASE_DIR, "images")
+SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+
+
+
+# Screen size
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 600
+
+# background
+background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'tokyo.png')) 
+background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Colors used
+BLACK = (0, 0, 0)
+YELLOW = (255, 223, 0)
+WHITE = (255, 255, 255)
+DARK_BLUE = (0, 0, 128)
+RED = (250, 0, 0)
+
+
+font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
 
 class Pokedex:
     
@@ -10,6 +40,41 @@ class Pokedex:
         self.name = name
         self.pokemon_list = []
         self.pokedex_list = []
+        pygame.font.init()  # calls and manage fonts
+        self.title_font = pygame.font.Font(font_path, 70)
+        self.poke_font = pygame.font.Font(font_path, 36)
+       
+        # Calls screen
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Pokemon")
+        
+        self.back_button_rect = None  # Initialisation back button
+# Display the score booard rectangle   
+    def displayScore(self):
+        
+        
+        scoreSurface = pygame.Surface((800,400),pygame.SRCALPHA)  
+        scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        pygame.draw.rect(scoreSurface, (0, 0,0, 128), (0, 0, 800, 400),border_radius=15)
+        self.screen.blit(scoreSurface, scoreRect.topleft)
+    
+    def display_title(self):
+        title_text = self.title_font.render("History", True, RED)
+        title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 50))
+        self.screen.blit(title_text, title_rect)
+
+    # Create the "Back to Menu" button
+    def displayBlackButton(self):   
+        button_width = 220
+        button_height = 40
+        self.back_button_rect = pygame.Rect(10, self.screen.get_height() - button_height - 10, button_width, button_height)
+        pygame.draw.rect(self.screen, YELLOW, self.back_button_rect, border_radius=15)
+
+        # Button text
+        back_button_text = self.poke_font.render("<<< Menu", True, DARK_BLUE)
+        back_button_text_rect = back_button_text.get_rect(center=self.back_button_rect.center)
+        self.screen.blit(back_button_text, back_button_text_rect)
+        return self.back_button_rect
     
     def choose_pokemon_random(self):
         with open('pokemon.json', 'r') as file:#load all pokemons from pokemon.json
@@ -36,26 +101,38 @@ class Pokedex:
                 self.pokedex_list = []
         return self.pokedex_list
     
-# New entry recording after a fight    
-    def end_fight_recording(self):
-        new_entry = Return.combat() # pick up records from "Combat²" after the fight
-        return new_deck
+    def run(self):
+            print("Méthode run() appelée")
+            running = True
+            
+            self.back_button_rect = self.displayBlackButton()
 
+            while running:
 
+                self.screen.blit(background_image, (0, 0))  # Background
+                
+                # Display elements
+                self.display_title()
+                self.displayBlackButton()
+                self.displayScore()
+                
+                pygame.display.flip()  # Update screen
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = pygame.mouse.get_pos()
+                        if self.back_button_rect.collidepoint(mouse_pos):# return to menu
+                            from menu import Menu 
+                            menu = Menu()
+                            menu.run()  
+                            running = False  # close window
+                            
+            pygame.quit()  
 
+if __name__ == "__main__":
+    pokedex= Pokedex("player_deck")
+    pokedex.run()
 
-# Pokedex instance
-player_1 = Pokedex("player_deck")
-
-# deck created by calling the deck_building function
-player_1.deck_building()
-player_1.deck_building()
-
-
-player_1.pokedex_list = player_1.deck_building()
-player_1.record_pokedex()
-
-#print(player_1.record_pokedex())
-print(player_1.get_pokedex_list())
 
 
