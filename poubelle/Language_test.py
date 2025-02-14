@@ -18,7 +18,7 @@ class Display:
         ]
         
         self.language ="en" #Default language English
-        
+        self.language_text = self.lang[self.language]["language"] # "language' display with the menu
         """"texts[language]["language"] extracts the value associated with the key "language".
 This key is used to display a button that allows changing the language.
 If language is "en", the obtained value is "FR" (to offer switching to French).
@@ -159,7 +159,7 @@ If language is "fr", the obtained value is "EN" (to offer switching to English).
     def display_languages(self):
         # Draw the button for languages
         pygame.draw.rect(screen, yellow, self.language_rect)
-        font_dis_lang = font.render(language_text, 1, white) # diqplay font used
+        font_dis_lang = font.render(self.language_text, 1, white) # diqplay font used
         font_rect_lang = font_dis_lang.get_rect(center=self.language_rect.center)
         screen.blit(font_dis_lang, font_rect_lang)
 
@@ -168,7 +168,7 @@ If language is "fr", the obtained value is "EN" (to offer switching to English).
 prompt_text = font.render(texts[language]["enter_name"], True, (255, 255, 255))  # Blanc
 screen.blit(prompt_text, ((SCREEN_WIDTH - prompt_text.get_width()) // 2, SCREEN_HEIGHT // 3))
 
-lose_text = LARGE_FONT.render(texts[language]["you_lose"], True, RED)
+lose_text = LARGE_FONT.render(self.lang[self.language]["you_lose"], True, RED)
 screen.blit(lose_text, (SCREEN_WIDTH // 2 - lose_text.get_width() // 2, SCREEN_HEIGHT // 2 - lose_text.get_height() // 2))
 
 

@@ -18,6 +18,7 @@ class Pokedex:
         pokemon_sample = random.sample(self.pokemon_list, 4) # Randomly chooses 1 element from pokemon_list
         return pokemon_sample
 
+# Build a deck randomly
     def deck_building(self):
         new_deck = self.choose_pokemon_random() # Calls the sample function
         return new_deck
@@ -26,7 +27,7 @@ class Pokedex:
         with open('pokedex.json', 'w') as fichier:
             json.dump(self.pokedex_list, fichier,indent=4)
 
-    
+ # Get pokedex from podex.json   
     def get_pokedex_list(self): # Get pokedex and create a pokedex if none
         try:
             with open('pokedex.json', 'r') as fichier:
@@ -35,8 +36,10 @@ class Pokedex:
                 self.pokedex_list = []
         return self.pokedex_list
     
-    
-
+# New entry recording after a fight    
+    def end_fight_recording(self):
+        new_entry = Return.combat() # pick up records from "Combat²" after the fight
+        return new_deck
 
 
 

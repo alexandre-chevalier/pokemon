@@ -36,13 +36,21 @@ class History:
     def __init__(self, players_file):
         self.players_file = players_file
 
-        pygame.font.init()  # S'assurer que le module de police est bien initialisé
+        pygame.font.init()  # calls and manage fonts
         self.title_font = pygame.font.Font(font_path, 70)
         self.poke_font = pygame.font.Font(font_path, 36)
-
+       
+        # Calls screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon")
-        self.back_button_rect = None  # Initialisation de l'attribut du bouton
+        
+        self.back_button_rect = None  # Initialisation back button
+# Display the score booard rectangle   
+    def displayScore(self):
+        
+        scoreRect = pygame.Rect (0,0,200, 100)#Create the rectangle
+        scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        pygame.draw.rect(self.screen, RED, scoreRect)
 
     def display_title(self):
         title_text = self.title_font.render("Scoreboard", True, RED)
@@ -95,30 +103,32 @@ class History:
     def run(self):
         print("Méthode run() appelée")
         running = True
+        
         self.back_button_rect = self.displayBlackButton()
-        mouse_pos = (0, 0)  # Ajout d'une valeur par défaut
+
         while running:
+            self.screen.fill(WHITE)  # Vider l'écran avec la couleur blanche
             self.screen.blit(background_image, (0, 0))  # Background
+            
             # Display elements
             self.display_title()
             self.displayBlackButton()
-
+            self.displayScore()
+            
             pygame.display.flip()  # Update screen
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
-                    if self.back_button_rect.collidepoint(mouse_pos):
+                    if self.back_button_rect.collidepoint(mouse_pos):# return to menu
                         from menu import Menu 
                         menu = Menu()
-                        menu.run()  # Retour au menu
-                        running = False  # Fermer la fenêtre actuelle
+                        menu.run()  
+                        running = False  # close window
                         
-        pygame.quit()  # Déplacer pygame.quit ici pour s'assurer qu'il est appelé lorsque la boucle est terminée
+        pygame.quit()  
 
-
-# Créer une instance de la classe History et lancer la méthode run
 if __name__ == "__main__":
     history = History("players.json")
     history.run()

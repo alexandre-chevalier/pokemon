@@ -1,5 +1,5 @@
 import json
-from alex import * 
+from pokemon import * 
 import os
 
 BASE_DIR = r"C:\Users\Windows\Desktop\projets\1a\pokemon"
@@ -57,13 +57,13 @@ class Pokemon_bank:
 # a new Pokemon_Bank instance
 pokemon = Pokemon_bank("original_bank")
 
-pikachu = Pikachu()
-carapuce =Carapuce()
-salameche =Salameche()
-bulbizarre = Bulbizarre()
-lugia = Lugia()
-artikodin = Artikodin()
-triopiqueur =Triopiqueur()
+pika = pikachu
+cara = carapuce
+salam = salameche
+bulbi = bulbizarre
+lug = lugia
+arti = artikodin
+triop = triopiqueur
 
 
 pokemon.add_to_list(pikachu)
