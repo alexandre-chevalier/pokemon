@@ -48,10 +48,12 @@ class History:
 # Display the score booard rectangle   
     def displayScore(self):
         
-        scoreRect = pygame.Rect (0,0,200, 100)#Create the rectangle
-        scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        pygame.draw.rect(self.screen, RED, scoreRect)
-
+        
+        scoreSurface = pygame.Surface((800, 400),pygame.SRCALPHA)  
+        scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        pygame.draw.rect(scoreSurface, (255,0,0,128), (0, 0, 800, 400))
+        self.screen.blit(scoreSurface, scoreRect.topleft)
+    
     def display_title(self):
         title_text = self.title_font.render("Scoreboard", True, RED)
         title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 50))
@@ -107,7 +109,7 @@ class History:
         self.back_button_rect = self.displayBlackButton()
 
         while running:
-            self.screen.fill(WHITE)  # Vider l'écran avec la couleur blanche
+
             self.screen.blit(background_image, (0, 0))  # Background
             
             # Display elements
