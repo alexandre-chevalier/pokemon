@@ -1,20 +1,18 @@
 import json
 import pygame
 import os
+import random
+
+# Pygame start
 pygame.init()
 pygame.font.init()
-
-
+# Screen size
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ways to files
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 SOUND_DIR = os.path.join(BASE_DIR, "sounds")
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
-
-# Pygame start
-pygame.init()
-pygame.font.init()
 
 # Screen size
 SCREEN_WIDTH = 1200
@@ -34,10 +32,13 @@ RED = (250, 0, 0)
 
 font_path = os.path.join(ASSETS_DIR, "Audiowide-Regular.ttf")
 
-class History:
-    def __init__(self, players_file):
-        self.players_file = players_file
-
+class Pokedex:
+    
+    def __init__(self, name):
+        
+        self.name = name
+        self.pokemon_list = []
+        self.pokedex_list = []
         pygame.font.init()  # calls and manage fonts
         self.title_font = pygame.font.Font(font_path, 70)
         self.poke_font = pygame.font.Font(font_path, 36)
@@ -57,7 +58,7 @@ class History:
         self.screen.blit(scoreSurface, scoreRect.topleft)
     
     def display_title(self):
-        title_text = self.title_font.render("Scoreboard", True, RED)
+        title_text = self.title_font.render("History", True, RED)
         title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 50))
         self.screen.blit(title_text, title_rect)
 
@@ -74,65 +75,63 @@ class History:
         self.screen.blit(back_button_text, back_button_text_rect)
         return self.back_button_rect
     
-    def record_history(self, score, player_name):
+    def choose_pokemon_random(self):
+        with open('pokemon.json', 'r') as file:#load all pokemons from pokemon.json
+            self.pokemon_list = json.load(file)
+       
+        pokemon_sample = random.sample(self.pokemon_list, 4) # Randomly chooses 1 element from pokemon_list
+        return pokemon_sample
+
+# Build a deck randomly
+    def deck_building(self):
+        new_deck = self.choose_pokemon_random() # Calls the sample function
+        return new_deck
+    
+    def record_pokedex(self):
+        with open('pokedex.json', 'w') as fichier:
+            json.dump(self.pokedex_list, fichier,indent=4)
+
+ # Get pokedex from podex.json   
+    def get_pokedex_list(self): # Get pokedex and create a pokedex if none
         try:
-            with open("players.json", "r") as f:
-                players_container = json.load(f)
+            with open('pokedex.json', 'r') as fichier:
+                self.pokedex_list = json.load(fichier)
         except FileNotFoundError:
-            players_container = []
-        except json.JSONDecodeError:
-            players_container = []
-        
-        player_found = False
-        for player in players_container:
-            if player["name"] == player_name:
-                player["score"] += score
-                player["pokedex"] = player_name
-                player_found = True
-                break
-        
-        if not player_found:
-            players_container.append({"name": player_name, "score": score, "pokedex": player_name})
-        
-        players_container = sorted(players_container, key=lambda x: x["score"], reverse=True)
-        
-        with open("players.json", "w") as f:
-            json.dump(players_container, f, indent=4)
-
-    def get_player_history(self):
-        with open("players.json", "r") as file:
-            players_container = json.load(file)
-        return players_container
-
+                self.pokedex_list = []
+        return self.pokedex_list
+    
     def run(self):
-        print("Méthode run() appelée")
-        running = True
-        
-        self.back_button_rect = self.displayBlackButton()
-
-        while running:
-
-            self.screen.blit(background_image, (0, 0))  # Background
+            print("Méthode run() appelée")
+            running = True
             
-            # Display elements
-            self.display_title()
-            self.displayBlackButton()
-            self.displayScore()
-            
-            pygame.display.flip()  # Update screen
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    if self.back_button_rect.collidepoint(mouse_pos):# return to menu
-                        from menu import Menu 
-                        menu = Menu()
-                        menu.run()  
-                        running = False  # close window
-                        
-        pygame.quit()  
+            self.back_button_rect = self.displayBlackButton()
+
+            while running:
+
+                self.screen.blit(background_image, (0, 0))  # Background
+                
+                # Display elements
+                self.display_title()
+                self.displayBlackButton()
+                self.displayScore()
+                
+                pygame.display.flip()  # Update screen
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        mouse_pos = pygame.mouse.get_pos()
+                        if self.back_button_rect.collidepoint(mouse_pos):# return to menu
+                            from menu import Menu 
+                            menu = Menu()
+                            menu.run()  
+                            running = False  # close window
+                            
+            pygame.quit()  
 
 if __name__ == "__main__":
-    history = History("players.json")
-    history.run()
+    pokedex= Pokedex("player_deck")
+    pokedex.run()
+
+
+

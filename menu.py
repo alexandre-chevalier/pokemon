@@ -1,26 +1,27 @@
 import pygame
 import os
 from manage_players import *
+from manage_pokedex import *
 
-# Define BASE_DIR comme le dossier du fichier actuel
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ways to files
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 
 # Pygame start
 pygame.init()
+pygame.font.init()
 
 # Screen size
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
 
 # background
-# Charger une image correctement avec BASE_DIR
-background_image_path = os.path.join(IMAGE_DIR, "forest_ring.webp")
-background_image = pygame.image.load(background_image_path)
+background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'glory.png')) 
 background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
 
 # Colors used
 BLACK = (0, 0, 0)
@@ -88,6 +89,10 @@ class Menu:
                         if button_rect.collidepoint(mouse_pos):
                             if option == "Exit":
                                 running = False
+                            elif option == "History":
+                                    pokedex= Pokedex("player_deck")
+                                    pokedex.run()
+
                             elif option == "Scoreboard":
                                 history = History("players.json")
                                 history.run()
