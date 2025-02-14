@@ -30,6 +30,7 @@ WHITE = (255, 255, 255)
 DARK_BLUE = (0, 0, 128)
 RED = (250, 0, 0)
 
+
 font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
 
 class History:
@@ -49,9 +50,9 @@ class History:
     def displayScore(self):
         
         
-        scoreSurface = pygame.Surface((800, 400),pygame.SRCALPHA)  
+        scoreSurface = pygame.Surface((800,400),pygame.SRCALPHA)  
         scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-        pygame.draw.rect(scoreSurface, (255,0,0,128), (0, 0, 800, 400))
+        pygame.draw.rect(scoreSurface, (0, 0,0, 128), (0, 0, 800, 400),border_radius=15)
         self.screen.blit(scoreSurface, scoreRect.topleft)
     
     def display_title(self):
