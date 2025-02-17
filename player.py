@@ -48,7 +48,8 @@ class Player:
     def save_to_file(self, filepath):
         player_data = {
             "name": self.name,
-            "pokemon": self.pokemon
+            "pokemon": self.pokemon,
+            "score": 0
         }
 
         if os.path.exists(filepath):
