@@ -89,9 +89,10 @@ class Pokedex:
         return new_deck
     
     def record_pokedex(self):
+        self.entry = {self.name : self.pokedex_list}
         with open('pokedex.json', 'w') as fichier:
-            json.dump(self.pokedex_list, fichier,indent=4)
-
+            json.dump(self.entry, fichier,indent=4)
+ 
  # Get pokedex from podex.json   
     def get_pokedex_list(self): # Get pokedex and create a pokedex if none
         try:
