@@ -7,20 +7,19 @@ import random
 pygame.init()
 pygame.font.init()
 # Screen size
-BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ways to files
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 SOUND_DIR = os.path.join(BASE_DIR, "sounds")
-
-
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 
 # Screen size
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
 
 # background
-background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'tokyo.png')) 
+background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'glory.png')) 
 background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Colors used
@@ -31,7 +30,7 @@ DARK_BLUE = (0, 0, 128)
 RED = (250, 0, 0)
 
 
-font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
+font_path = os.path.join(ASSETS_DIR, "Audiowide-Regular.ttf")
 
 class Pokedex:
     
@@ -89,10 +88,9 @@ class Pokedex:
         return new_deck
     
     def record_pokedex(self):
-        self.entry = {self.name : self.pokedex_list}
         with open('pokedex.json', 'w') as fichier:
-            json.dump(self.entry, fichier,indent=4)
- 
+            json.dump(self.pokedex_list, fichier,indent=4)
+
  # Get pokedex from podex.json   
     def get_pokedex_list(self): # Get pokedex and create a pokedex if none
         try:
