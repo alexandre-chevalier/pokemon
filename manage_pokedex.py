@@ -40,7 +40,9 @@ class Pokedex:
         self.name = name
         self.pokemon_list = []
         self.pokedex_list = []
-        self.pokemon_met = []
+        self.pokemon_met = [{'name': 'pikachu', 'lifePoint': 100, 'level': 1, 'experience': 0, 'giveXp': 10, 'limitXP': 20, 'attack': 10, 'defence': 8, 'type1': 'electric', 'type2': None, 'KO': False, 'link_image': 'images', 'statut': 'normal', 'next_evolution': {'name': 'raichu', 'lifePoint': 250, 'level': 1, 'experience': 0, 'giveXp': 100, 'limitXP': 120, 'attack': 30, 'defence': 25, 'type1': 'electric', 'type2': None, 'KO': False, 'link_image': 'images', 'statut': 'normal', 'next_evolution': None}}, 
+                            
+                            ]
         pygame.font.init()  # calls and manage fonts
         self.title_font = pygame.font.Font(font_path, 70)
         self.poke_font = pygame.font.Font(font_path, 36)
@@ -60,7 +62,7 @@ class Pokedex:
         self.screen.blit(scoreSurface, scoreRect.topleft)
     
     def display_title(self):
-        title_text = self.title_font.render("History", True, RED)
+        title_text = self.title_font.render("Pokedex", True, RED)
         title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 50))
         self.screen.blit(title_text, title_rect)
 
@@ -89,20 +91,23 @@ class Pokedex:
         new_deck = self.choose_pokemon_random() # Calls the sample function
         return new_deck
     
-    def record_pokedex(self):
-        self.entry = {self.name : self.pokemon_met}
-        self.pokedex_list.append(self.entry)
-        with open('pokedex.json', 'w') as fichier:
-            json.dump(self.pokedex_list, fichier,indent=4)
- 
- # Get pokedex from podex.json   
+     # Get pokedex from podex.json   
     def get_pokedex_list(self): # Get pokedex and create a pokedex if none
         try:
-            with open('pokedex.json', 'r') as fichier:
+            with open('poke.json', 'r') as fichier:
                 self.pokedex_list = json.load(fichier)
         except FileNotFoundError:
                 self.pokedex_list = []
-        return self.pokedex_list
+        return self.pokedex_list    
+    
+
+    
+    def record_pokedex(self):
+            self.get_pokedex_list()
+            self.entry = {self.name : self.pokemon_met}
+            self.pokedex_list.append(self.entry)
+            with open('poke.json', 'w') as fichier:
+                json.dump(self.pokedex_list, fichier,indent=4)
     
     def run(self):
             print("Méthode run() appelée")
@@ -134,8 +139,12 @@ class Pokedex:
             pygame.quit()  
 
 if __name__ == "__main__":
-    pokedex= Pokedex("player_deck")
-    pokedex.run()
 
+    player_name = input(" Joueur")
+    pokedex= Pokedex(player_name)
+    pokedex.record_pokedex()
+    pokedex_list = pokedex.get_pokedex_list()
+    print(pokedex_list)
+        # pokedex.run() 
 
 
