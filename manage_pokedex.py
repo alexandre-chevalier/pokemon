@@ -40,6 +40,7 @@ class Pokedex:
         self.name = name
         self.pokemon_list = []
         self.pokedex_list = []
+        self.pokemon_met = []
         pygame.font.init()  # calls and manage fonts
         self.title_font = pygame.font.Font(font_path, 70)
         self.poke_font = pygame.font.Font(font_path, 36)
@@ -89,9 +90,10 @@ class Pokedex:
         return new_deck
     
     def record_pokedex(self):
-        self.entry = {self.name : self.pokedex_list}
+        self.entry = {self.name : self.pokemon_met}
+        self.pokedex_list.append(self.entry)
         with open('pokedex.json', 'w') as fichier:
-            json.dump(self.entry, fichier,indent=4)
+            json.dump(self.pokedex_list, fichier,indent=4)
  
  # Get pokedex from podex.json   
     def get_pokedex_list(self): # Get pokedex and create a pokedex if none
