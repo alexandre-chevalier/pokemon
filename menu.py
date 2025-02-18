@@ -34,7 +34,7 @@ DARK_BLUE = (0, 0, 128)
 RED = (250, 0, 0)
 try:
     MUSIC_SCREEN = {
-                "main_menu" : pygame.mixer.music.load(os.path.join("sounds", "LugiaSong.wav")),
+                "main_menu" : pygame.mixer.music.load(os.path.join(SOUND_DIR, "LugiaSong.wav")),
                 "battle" : [
                     pygame.mixer.music.load(os.path.join(SOUND_DIR, "FrontierBrain.wav")),
                     
@@ -96,7 +96,8 @@ class Menu:
             "pokedex",
             "Exit",
             "main menu",
-            "enter your name : "
+            "enter your name : ",
+            "choose your pokemon : "
         ]
         self.buttons = self.create_keyboard()
         self.sound = MUSIC_SCREEN
@@ -168,7 +169,7 @@ class Menu:
         pygame.draw.rect(self.screen, self.color, self.rect4)
         pygame.draw.rect(self.screen, self.color, self.rect5)
 
-        text1 = self.font.render(self.text[6], True, (0, 0, 0))
+        text1 = self.font.render(self.text[5], True, (0, 0, 0))
 
         for pokemon in pokelist:
             text2 = self.font.render(pokemon, True, (0, 0, 0))
@@ -184,7 +185,6 @@ class Menu:
             pokelistJson = json.load(file)
             for i, poke in enumerate(pokelistJson):
                 list.append(f'{i+1}. {poke["name"]}')
-                print(list)
         return list
 
 
@@ -215,6 +215,12 @@ class Menu:
                     if self.rect3.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
+                if self.state == "pokemon":
+                    for pokemon, button in self.pokemon_buttons:
+                        if button.collidepoint(event.pos):
+                            print(f"You clicked on: {pokemon}")
+                            # Handle the Pokémon click here
+                            self.handle_pokemon_click(pokemon)
                 if self.state == "player":
                     if self.rect5.collidepoint(event.pos):
                         self.state = "main menu"
@@ -235,16 +241,11 @@ class Menu:
 
     def screen_transition(self):
         if self.state == "main menu":
-
-            self.sound = MUSIC_SCREEN["main_menu"]
-            pygame.mixer.music.play(1)
             self.background = SCREEN_BACKGROUND["main_menu"]
             self.screen.blit(self.background, (0,0))
             self.screen_main_menu()
 
         elif self.state == "player":
-            self.sound = MUSIC_SCREEN["main_menu"]
-            pygame.mixer.music.play(1)
             self.background = SCREEN_BACKGROUND["main_menu"]
             self.screen.blit(self.background, (0,0))
             self.screen_enter_player()
