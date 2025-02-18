@@ -53,7 +53,6 @@ class Pokemon:
         if self.lifePoint <= 0:
             self.KO = True
     
-
 #########################################################################################################################
     def record_pokemon(self):
         pokemon_dict_list = [pokemon.to_dict() for pokemon in self.pokemon_list]
@@ -65,7 +64,7 @@ class Pokemon:
                 with open('pokemon.json', 'r') as fichier:
                     pokemon_list = json.load(fichier)
             except FileNotFoundError:
-                    pokemon_list = []
+                    self.pokemon = []
             return pokemon_list
 
     #  Build the list updated
@@ -81,7 +80,8 @@ class Pokemon:
                 print('this pokemon is already in your pokedex')
 
     #name, lifePoint, level, XP, evolution, giveXP, limitXP,  attack, defence, type1, type2,
-        
+########################################################################################################################
+
     def add_pokemon(self):
             name = input("Nom du Pokémon : ")
             pv = int(input("Points de vie : "))
@@ -95,8 +95,6 @@ class Pokemon:
                         "type2": None, "next_evolution" : self.next_evolution}
             self.add_to_list(new_pokemon)
             print(f"{name} a été ajouté !") 
-
-########################################################################################################################
 
 
     def to_dict(self):
@@ -135,7 +133,7 @@ class Pokemon:
     def __str__(self):
             dictio =  f"""
                 name : {self.name}
-                lifepoint : {self.lifePoint}
+                lifePoint : {self.lifePoint}
                 level : {self.level}
                 xp : {self.experience}
                 giveXp : {self.giveXp}
