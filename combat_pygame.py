@@ -2,7 +2,7 @@ import pygame
 import random
 import json
 import os
-from pokémon import Pokemon
+from pokémon import *
 
 # Initialize Pygame
 pygame.init()
@@ -29,30 +29,56 @@ font = pygame.font.Font(font_path, 36)
 
 
 # List of possible opponent Pokémon
-opponent_pokemon_list = [
-    Pokemon("Salamèche", 100, 1, 0, 10, 20, 10, 8, "Feu", None, None),
-    Pokemon("Carapuce", 100, 1, 0, 10, 20, 10, 8, "Eau", None, None),
-    Pokemon("Bulbizarre", 100, 1, 0, 10, 20, 10, 8, "Plante", None, None),
+#opponent_pokemon_list = [
+   # Pokemon("Salamèche", 100, 1, 0, 10, 20, 10, 8, "Feu", None, None),
+   # Pokemon("Carapuce", 100, 1, 0, 10, 20, 10, 2, "Eau", None, None),
+    #Pokemon("Bulbizarre", 100, 1, 0, 10, 20, 10, 8, "Plante", None, None),
     
-]
+#]
 
 class Combat:
     TYPE_EFFICACY = {
-        ("Eau", "Feu"): 2, ("Feu", "Plante"): 2, ("Plante", "Eau"): 2,
-        ("Feu", "Eau"): 0.5, ("Eau", "Plante"): 0.5, ("Plante", "Feu"): 0.5,
-        ("Normal", "Normal"): 1, ("Eau", "Eau"): 1, ("Feu", "Feu"): 1,
-    }
+    ("Spectre", "Spectre"): 2, ("Spectre", "Psy"): 2, ("Spectre", "Normal"): 0, ("Spectre", "Combat"): 0,
+    ("Acier", "Glace"): 2, ("Acier", "Roche"): 2, ("Acier", "Acier"): 0.5, ("Acier", "Feu"): 0.5, ("Acier", "Eau"): 0.5, ("Acier", "Électrik"): 0.5,
+    ("Psy", "Combat"): 2, ("Psy", "Poison"): 2, ("Psy", "Acier"): 0.5, ("Psy", "Ténèbres"): 0,
+    ("Combat", "Normal"): 2, ("Combat", "Roche"): 2, ("Combat", "Glace"): 2, ("Combat", "Acier"): 2, ("Combat", "Spectre"): 0, ("Combat", "Poison"): 0.5, ("Combat", "Vol"): 0.5, ("Combat", "Psy"): 0.5, ("Combat", "Fée"): 0.5,
+    ("Poison", "Plante"): 2, ("Poison", "Fée"): 2, ("Poison", "Poison"): 0.5, ("Poison", "Sol"): 0.5, ("Poison", "Roche"): 0.5, ("Poison", "Spectre"): 0.5, ("Poison", "Acier"): 0,
+    ("Ténèbres", "Psy"): 2, ("Ténèbres", "Spectre"): 2, ("Ténèbres", "Combat"): 0.5, ("Ténèbres", "Fée"): 0.5,
+    ("Fée", "Combat"): 2, ("Fée", "Dragon"): 2, ("Fée", "Ténèbres"): 2, ("Fée", "Feu"): 0.5, ("Fée", "Poison"): 0.5, ("Fée", "Acier"): 0.5,
+    ("Dragon", "Dragon"): 2, ("Dragon", "Fée"): 0,
+    ("Électrik", "Eau"): 2, ("Électrik", "Vol"): 2, ("Électrik", "Électrik"): 0.5, ("Électrik", "Plante"): 0.5, ("Électrik", "Dragon"): 0.5, ("Électrik", "Sol"): 0
+}
+
 
     def __init__(self, pokemon1):
         self.pokemon1 = pokemon1
-        self.pokemon2 = random.choice(opponent_pokemon_list) 
+        pokemon_list = self.load_pokemon_list()
+        self.pokemon2 = (random.choice(pokemon_list)) 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Battle")
         self.attack_button_rect = None
 
-        # Load Pokémon images
+        # Load
+        # Pokémon images
         self.pokemon1_image = self.load_and_scale_image(self.pokemon1.name, (150, 150))
         self.pokemon2_image = self.load_and_scale_image(self.pokemon2.name, (150, 150))
+    
+    
+    def load_pokemon_list(self):
+        try:
+          with open('pokemon.json', 'r') as file:
+            data = json.load(file)
+            # Liste des attributs attendus dans la classe `Pokemon`
+            expected_keys = {"name","lifePoint", "level", "XP", "giveXP", "limitXP",  "attack", "defence", "type1", "type2", "next_evolution"}
+            # Filtrer uniquement les clés valides
+            return [Pokemon(**{k: v for k, v in p.items() if k in expected_keys}) for p in data]
+
+        except FileNotFoundError:
+            print("Error: 'pokemon.json' file not found.")
+            return []
+        except json.JSONDecodeError:
+          print("Error: Invalid JSON format in 'pokemon.json'.")
+          return []
 
     def load_and_scale_image(self, pokemon_name, size):
         try:
@@ -85,9 +111,20 @@ class Combat:
             self.screen.blit(self.pokemon2_image, (SCREEN_WIDTH - 200, 200))
 
     def calculate_multiplier(self, attacker, target):
-        return self.TYPE_EFFICACY.get((attacker.type1, target.type1), 1)
-
+        multiplier1 = self.TYPE_EFFICACY.get((attacker.type1, target.type1), 1)
+        multiplier2 = self.TYPE_EFFICACY.get((attacker.type1, target.type2), 1) if target.type2 else 1
+        return multiplier1 * multiplier2  
+    
+    def play_attack_sound(self):
+        try:
+            sound_path = os.path.join(SOUND_DIR, "attack2.mp3")
+            pygame.mixer.Sound(sound_path).play()
+        except pygame.error as e:
+            
+           print(f"Error loading sound: {e}")
+    
     def attack(self, attacker, target):
+        self.play_attack_sound() 
         multiplier = self.calculate_multiplier(attacker, target)
         damage = max(0, (attacker.attack * multiplier) - target.defence)
         target.lifePoint -= damage
@@ -110,7 +147,13 @@ class Combat:
     def display_turn(self, attacker_name):
         turn_info = font.render(f"{attacker_name}'s turn to attack!", True, WHITE)
         self.screen.blit(turn_info, (50, 150))
-
+    
+    def display_winner(self, winner):
+        winner_text = font.render(f"Winner: {winner.name}!", True, YELLOW)
+        self.screen.blit(winner_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
+        pygame.display.flip()
+        pygame.time.delay(3000)  
+    
     def start_battle(self):
         running = True
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
@@ -140,7 +183,9 @@ class Combat:
 
             if self.pokemon1.KO or self.pokemon2.KO:
                 winner = self.pokemon1 if not self.pokemon1.KO else self.pokemon2
-                print(f"The winner is {winner.name}!")
+                self.display_winner(winner)  # Affichage du gagnant
+
+                #print(f"The winner is {winner.name}!")
                 running = False
 
             pygame.display.flip()
@@ -148,6 +193,5 @@ class Combat:
         pygame.quit()
 
 # Example usage
-pikachu = Pokemon("Pikachu", 100, 1, 0, 10, 20, 10, 8, "Eau", None, None)
 combat = Combat(pikachu)
 combat.start_battle()
