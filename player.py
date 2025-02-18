@@ -6,12 +6,13 @@ class Player:
         self.name = name
         self.pokemon_file = "pokemon\pokemon.json"
         self.player_file = "pokemon\players.json"
-        """if self.player_exists(players_filepath):
+
+        """if self.player_exists(self.player_file):
             print(f"Vous avez déjà un compte avec ce nom.")
-            self.pokemon = self.choose_pokemon(pokemon_filepath, players_filepath)
+            self.pokemon = self.choose_pokemon(self.pokemon_file, self.player_file)
         else:
-            self.pokemon = self.choose_pokemon(pokemon_filepath, players_filepath)
-"""
+            self.pokemon = self.choose_pokemon(self.pokemon_file, self.player_file)"""
+        
     def player_exists(self):
         if os.path.exists(self.player_file):
             try:
@@ -24,7 +25,7 @@ class Player:
                 return False
         return False
 
-    def choose_pokemon(self):
+    def choose_pokemon(self, choice):
         while True:
             try:
                 with open(self.pokemon_file, 'r') as file:
@@ -37,13 +38,10 @@ class Player:
             for index, pokemon in enumerate(pokemon_list, start=1):
                 print(f"{index}. {pokemon['name']}")
 
-            choice = input("Entrez le numéro du Pokémon choisi: ")
             if choice.isdigit() and 1 <= int(choice) <= len(pokemon_list):
                 chosen_pokemon = pokemon_list[int(choice) - 1]
-                print(f"Vous avez choisi {chosen_pokemon['name']}. Voulez-vous confirmer ce choix ? (oui/non)")
-                confirm = input().lower()
-                if confirm == 'oui':
-                    return chosen_pokemon
+                print(f"Vous avez choisi {chosen_pokemon['name']}.")
+                return chosen_pokemon
             else:
                 print("Entrée invalide. Veuillez entrer un numéro valide.")
 
@@ -80,6 +78,3 @@ class Player:
         with open(self.player_file, 'w') as file:
             json.dump(data, file, indent=4)
 
-if __name__ == "__main__":
-    player = Player('C:/Users/kylli/Desktop/Spe_ia/pokemon/pokemon.json', 'C:/Users/kylli/Desktop/Spe_ia/pokemon/players.json')
-    player.save_to_file('C:/Users/kylli/Desktop/Spe_ia/pokemon/players.json')

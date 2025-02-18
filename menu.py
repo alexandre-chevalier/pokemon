@@ -159,10 +159,35 @@ class Menu:
         self.screen.blit(text3,text3.get_rect(center=self.rect1.center))
         
         self.draw_keyboard()
+        self.player.player_exists()
         pygame.display.flip()
     
     def screen_pokemon(self):
-        print("pokémon")
+        pokelist = self.display_pokemon()
+        vertical_pos =self.rect4.top + 20
+        pygame.draw.rect(self.screen, self.color, self.rect4)
+        pygame.draw.rect(self.screen, self.color, self.rect5)
+
+        text1 = self.font.render(self.text[6], True, (0, 0, 0))
+
+        for pokemon in pokelist:
+            text2 = self.font.render(pokemon, True, (0, 0, 0))
+            font_rect = text2.get_rect(midtop=(self.rect4.centerx, vertical_pos))
+            self.screen.blit(text2, font_rect)
+            vertical_pos += 40
+        
+        self.screen.blit(text1, text1.get_rect(center=self.rect5.center))
+
+    def display_pokemon(self):
+        list = []
+        with open('pokemon\pokemon.json', 'r') as file:
+            pokelistJson = json.load(file)
+            for i, poke in enumerate(pokelistJson):
+                list.append(f'{i+1}. {poke["name"]}')
+                print(list)
+        return list
+
+
 
     def screen_game_battle(self):
         print("battle screen")
@@ -181,8 +206,6 @@ class Menu:
                     if button.collidepoint(event.pos):
                         self.username += char
                         print(self.username)
-                        
-
                 if self.state == "main menu":
                     if self.rect1.collidepoint(event.pos):
                         self.state = "player"
@@ -213,14 +236,15 @@ class Menu:
     def screen_transition(self):
         if self.state == "main menu":
 
-            #self.sound = MUSIC_SCREEN["main_menu"]
-            #pygame.mixer.music.play(1)
+            self.sound = MUSIC_SCREEN["main_menu"]
+            pygame.mixer.music.play(1)
             self.background = SCREEN_BACKGROUND["main_menu"]
             self.screen.blit(self.background, (0,0))
             self.screen_main_menu()
 
         elif self.state == "player":
-
+            self.sound = MUSIC_SCREEN["main_menu"]
+            pygame.mixer.music.play(1)
             self.background = SCREEN_BACKGROUND["main_menu"]
             self.screen.blit(self.background, (0,0))
             self.screen_enter_player()
@@ -231,8 +255,8 @@ class Menu:
             self.screen_pokemon()
 
         elif self.state == "battle":
-
-            #self.background = random.choice(MUSIC_SCREEN["battle"])
+            self.sound = random.choice(MUSIC_SCREEN["battle"])
+            pygame.mixer.music.play(1)
             self.background = random.choice(SCREEN_BACKGROUND["battle"])
             self.screen.blit(self.background, (0,0))
             self.screen_game_battle()
