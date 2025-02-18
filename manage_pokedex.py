@@ -134,6 +134,12 @@ class Pokedex:
     
     def record_pokedex(self):
             self.get_pokedex_list()
+            
+            if self.name:  # Assure que self.player_name contient bien le nom du joueur    
+                for entry in self.pokedex_list:
+                    if self.name in entry:
+                        pokemon_list = entry[self.name]
+            
             self.entry = {self.name : self.pokemon_met}
             self.pokedex_list.append(self.entry)
             with open('poke.json', 'w') as fichier:
@@ -173,6 +179,6 @@ if __name__ == "__main__":
     player_name = input("Nom du dresseur :")
     pokedex= Pokedex(player_name)
 
-    pokedex.run() 
+    print(pokedex.get_pokedex_list())
 
 
