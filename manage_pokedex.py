@@ -55,23 +55,23 @@ class Pokedex:
 
     def displayPokedex(self):
         # Création du rectangle semi-transparent
-        scoreSurface = pygame.Surface((800, 400), pygame.SRCALPHA)
-        scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-        pygame.draw.rect(scoreSurface, (0, 0, 0, 128), (0, 0, 800, 400), border_radius=15)
+        scoreSurface = pygame.Surface((1000, 440), pygame.SRCALPHA)
+        scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH//2, 310))
+        pygame.draw.rect(scoreSurface, (0, 0, 0, 180), (0, 0, 1000, 440), border_radius=15)
         
         # Chargement de la liste du Pokédex
         self.get_pokedex_list()
         
         # Définition de la police
         font = pygame.font.Font(None, 30)  # Police par défaut, taille 30
-        text_color = (255, 255, 255)  # Blanc
+        text_color = YELLOW # Blanc
 
         # Position de départ pour afficher le texte
         start_x = 10  # Décalage du bord gauche
         start_y = 10
         line_spacing = 50 
 
-        header_text = "Nom       Niv.     PV"
+        header_text = "Nom          Niv.       Type         Def/Att    PV     Nb"
         header_surface = self.poke_font.render(header_text, True, text_color)
         scoreSurface.blit(header_surface, (start_x, start_y))  
 
@@ -83,7 +83,7 @@ class Pokedex:
                         pokemon_list = entry[self.name]
                         
                         for index, pokemon in enumerate(pokemon_list):
-                                pokedex_text = f'{pokemon['name']}   {pokemon['level']}        {pokemon['lifePoint']}'
+                                pokedex_text = f'{pokemon['name']}       {pokemon['level']}   {pokemon['type1']}/{pokemon['type2']}   {pokemon['defence']}/{pokemon['attack']}      {pokemon['lifePoint']}       '
                                 text_surface = self.poke_font.render(pokedex_text, True, text_color)
                                 scoreSurface.blit(text_surface, (start_x, start_y + index * line_spacing))  # 30 pixels entre chaque ligne
 
@@ -93,7 +93,7 @@ class Pokedex:
     
     def display_title(self):
         title_text = self.title_font.render("Pokedex", True, RED)
-        title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 50))
+        title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 40))
         self.screen.blit(title_text, title_rect)
 
     # Create the "Back to Menu" button
