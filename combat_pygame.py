@@ -4,7 +4,7 @@ import json
 import os
 from pokemon import Pokemon
 from player import Player
-
+from manage_pokedex import Pokedex
 
 # Initialize Pygame
 pygame.init()
@@ -52,7 +52,10 @@ class Combat:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Battle")
         self.attack_button_rect = None
-
+        self.pokedex = Pokedex(self.player.name)
+        self.pokemon_list = []
+        self.pokedex_list = []
+        self.pokemon_met = []
         # Load
         # Pokémon images
         self.pokemon1_image = self.load_and_scale_image(self.pokemon1.name, (150, 150))
@@ -176,22 +179,60 @@ class Combat:
         self.screen.blit(winner_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
         pygame.display.flip()
         pygame.time.delay(3000) 
-        
-    def record_in_pokedex(self, pokemon):
+    
+    def get_pokedex_list(self):
+
         try:
-         if not hasattr(self, "pokedex"):
-             self.pokedex = []
-             if os.path.exists("pokedex.json"):
-                 with open("pokedex.json", "r") as f:
-                     self.pokedex = json.load(f)
-         
-         if pokemon.name not in self.pokedex:
-             self.pokedex.append(pokemon.name)
-             with open("pokedex.json", "w") as f:
-                 json.dump(self.pokedex, f, indent=4)
-             print(f"{pokemon.name} ajouté au Pokédex !")
-        except Exception as e:
-         print(f"Erreur lors de l'ajout au Pokédex : {e}")
+            with open('poke.json', 'r', encoding='utf-8') as fichier:
+                contenu = fichier.read().strip()
+                if not contenu:
+                    raise ValueError("Le fichier est vide")
+                self.pokedex_list = json.loads(contenu)
+        except (FileNotFoundError, ValueError, json.JSONDecodeError):
+            print("Le fichier poke.json est vide ou invalide. Réinitialisation...")
+            self.pokedex_list = []
+            with open('poke.json', 'w', encoding='utf-8') as fichier:
+                json.dump(self.pokedex_list, fichier, indent=4)
+    
+        return self.pokedex_list
+    
+    def record_pokedex(self, pokemon):
+        # Get the list of Pokémon in the Pokédex
+        self.get_pokedex_list()
+
+        if not self.name:  
+            return  
+
+        player_found = False
+
+        # Iterate through the entries in the Pokédex
+        for entry in self.pokedex_list:
+            if self.name in entry:
+                pokemon_dict = entry[self.name]
+
+                # If the Pokémon dictionary is a list, convert it to a dictionary format
+                if isinstance(pokemon_dict, list):  
+                    pokemon_dict = {poke: 1 for poke in pokemon_dict}  
+
+                # If the Pokémon has been encountered before, increase its count
+                if self.pokemon_met in pokemon_dict:
+                    pokemon_dict[self.pokemon_met] += 1
+                else:
+                    pokemon_dict[self.pokemon_met] = 1
+
+                # Update the player entry with the new Pokémon data
+                entry[self.name] = pokemon_dict
+                player_found = True
+                break  
+
+        # If the player entry is not found, create a new entry for the player and Pokémon
+        if not player_found:  
+            self.pokedex_list.append({self.name: {self.pokemon_met: 1}})
+
+        # Save the updated Pokédex data to the file
+        with open('poke.json', 'w') as fichier:
+            json.dump(self.pokedex_list, fichier, indent=4)
+
     
     def record_winner(self, winner, looser):
         
@@ -255,7 +296,7 @@ class Combat:
     def start_battle(self):
         running = True
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
-
+        pokedex_list = self.pokedex.get_pokedex_list()
         while running:
             self.screen.fill(BLACK)
             self.display_characteristics()
@@ -283,7 +324,7 @@ class Combat:
                 winner = self.pokemon1 if not self.pokemon1.KO else self.pokemon2
                 looser = self.pokemon1 if self.pokemon1.KO else self.pokemon2
                 self.display_winner(winner) # Affichage du gagnant
-                self.record_in_pokedex(self.pokemon2)
+                self.record_pokedex(self.pokemon2)
                 self.record_winner(winner,looser)
                 self.display_end_message(winner, looser)
 
