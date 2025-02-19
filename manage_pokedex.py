@@ -122,50 +122,58 @@ class Pokedex:
         return new_deck
     
      # Get pokedex from podex.json   
-    def get_pokedex_list(self): # Get pokedex and create a pokedex if none
+    def get_pokedex_list(self):
         try:
-            with open('poke.json', 'r') as fichier:
-                self.pokedex_list = json.load(fichier)
-        except FileNotFoundError:
-                self.pokedex_list = []
-        return self.pokedex_list    
-    
+            with open('poke.json', 'r', encoding='utf-8') as fichier:
+                contenu = fichier.read().strip()
+                if not contenu:
+                    raise ValueError("Le fichier est vide")
+                self.pokedex_list = json.loads(contenu)
+        except (FileNotFoundError, ValueError, json.JSONDecodeError):
+            print("Le fichier poke.json est vide ou invalide. Réinitialisation...")
+            self.pokedex_list = []
+            with open('poke.json', 'w', encoding='utf-8') as fichier:
+                json.dump(self.pokedex_list, fichier, indent=4)
+        
+        return self.pokedex_list
 
     
-   import json
 
-def record_pokedex(self):
-    self.get_pokedex_list()  # Charge les données du pokédex
     
-    if not self.name:  # Vérifie que le joueur a bien un nom
-        return  
 
-    player_found = False
 
-    for entry in self.pokedex_list:
-        if self.name in entry:
-            pokemon_dict = entry[self.name]
+    def record_pokedex(self):
+        self.get_pokedex_list()  
+        
+        if not self.name:  
+            return  
 
-            # Vérifie si le format est une liste au lieu d'un dictionnaire
-            if isinstance(pokemon_dict, list):  
-                pokemon_dict = {poke: 1 for poke in pokemon_dict}  # Convertit en dict
+        player_found = False
 
-            # Ajoute ou met à jour le Pokémon rencontré
-            if self.pokemon_met in pokemon_dict:
-                pokemon_dict[self.pokemon_met] += 1
-            else:
-                pokemon_dict[self.pokemon_met] = 1
-            
-            entry[self.name] = pokemon_dict  # Met à jour l'entrée du joueur
-            player_found = True
-            break  
+        for entry in self.pokedex_list:
+            if self.name in entry:
+                pokemon_dict = entry[self.name]
 
-    if not player_found:  # Si le joueur n'est pas trouvé, on crée une nouvelle entrée
-        self.pokedex_list.append({self.name: {self.pokemon_met: 1}})
+                
+                if isinstance(pokemon_dict, list):  
+                    pokemon_dict = {poke: 1 for poke in pokemon_dict}  
 
-    # Sauvegarde le fichier JSON
-    with open('poke.json', 'w') as fichier:
-        json.dump(self.pokedex_list, fichier, indent=4)
+                
+                if self.pokemon_met in pokemon_dict:
+                    pokemon_dict[self.pokemon_met] += 1
+                else:
+                    pokemon_dict[self.pokemon_met] = 1
+                
+                entry[self.name] = pokemon_dict 
+                player_found = True
+                break  
+
+        if not player_found:  
+            self.pokedex_list.append({self.name: {self.pokemon_met: 1}})
+
+        # Sauvegarde le fichier JSON
+        with open('poke.json', 'w') as fichier:
+            json.dump(self.pokedex_list, fichier, indent=4)
 
             
     def run(self):
@@ -199,9 +207,8 @@ def record_pokedex(self):
 
 if __name__ == "__main__":
    
-    player_name = input("Nom du dresseur :")
-    pokedex= Pokedex(player_name)
-
-    print(pokedex.get_pokedex_list())
+ 
+ pokedex= Pokedex("Paul")
+ pokedex.run()
 
 
