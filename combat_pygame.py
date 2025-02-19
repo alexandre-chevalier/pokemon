@@ -47,6 +47,10 @@ class Combat:
     def __init__(self,player):
         self.player = player
         self.pokemon1 = self.load_player_pokemon()
+        if self.pokemon1:
+            self.pokemon1_image = self.load_and_scale_image(self.pokemon1.name, (150, 150))
+        else:
+            self.pokemon1_image = None
         pokemon_list = self.load_pokemon_list()
         self.pokemon2 = (random.choice(pokemon_list)) 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -63,17 +67,15 @@ class Combat:
     def load_player_pokemon(self):
         """Charge le Pokémon actif du joueur depuis 'players.json'"""
         try:
-            with open('players.json', 'r') as file:
+            with open(r'C:/Users/Windows/Desktop/projets/1a/pokemon/players.json', 'r') as file:
                 data = json.load(file)
 
                 if not data:
                     raise ValueError("Le fichier players.json est vide !")
 
                 player = data[0]  # On suppose qu'il y a un seul joueur
-                player_name = player["name"]  
                 pokemon_data = player.get("pokemon", {})
 
-                # Liste des attributs attendus pour créer un Pokémon
                 expected_keys = {"name", "lifePoint", "level", "XP", "giveXP", "limitXP", "attack", "defence", "type1", "type2", "next_evolution"}
                 filtered_data = {k: v for k, v in pokemon_data.items() if k in expected_keys}
 
@@ -81,7 +83,8 @@ class Combat:
 
         except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
             print(f"Erreur lors du chargement du Pokémon du joueur: {e}")
-        return None, None
+        return None  # Ne pas retourner un tuple
+
 
                 
         
@@ -180,41 +183,46 @@ class Combat:
         pygame.time.delay(3000) 
     
     def get_pokedex_list(self):
-
         try:
-            with open('poke.json', 'r', encoding='utf-8') as fichier:
-                contenu = fichier.read().strip()
+            with open('poke.json', 'r', encoding='utf-8') as file:
+                # Lire le contenu du fichier
+                contenu = file.read().strip()
+                # Si le fichier est vide ou ne contient que des espaces, réinitialiser
                 if not contenu:
                     raise ValueError("Le fichier est vide")
                 self.pokedex_list = json.loads(contenu)
         except (FileNotFoundError, ValueError, json.JSONDecodeError):
             print("Le fichier poke.json est vide ou invalide. Réinitialisation...")
             self.pokedex_list = []
-            with open('poke.json', 'w', encoding='utf-8') as fichier:
-                json.dump(self.pokedex_list, fichier, indent=4)
-    
+            # Réinitialisation du fichier poke.json avec une liste vide
+            with open('poke.json', 'w', encoding='utf-8') as file:
+                json.dump(self.pokedex_list, file, indent=4)
+
         return self.pokedex_list
-        
+
+    
+
+    
     def record_pokedex(self, pokemon):
-        # Get the list of Pokémon in the Pokédex
+    # Vérifier que la liste des Pokémon a bien été chargée
         self.get_pokedex_list()
 
-        if not self.player:  # Check if the player is defined
+        if not self.player:  # Vérifier si le joueur est défini
             return
 
-        player_name = str(self.player)  # Convert Player object to string
+        player_name = str(self.player)  # Convertir l'objet Player en chaîne
         player_found = False
 
-        # Iterate over the Pokédex entries
+        # Parcourir les entrées du Pokédex
         for entry in self.pokedex_list:
-            if player_name in entry:  # Look for the player's entry by name
+            if player_name in entry:  # Chercher l'entrée du joueur par nom
                 pokemon_dict = entry[player_name]
 
-                # If the Pokémon is already in the dictionary, update its data
+                # Si le Pokémon est déjà présent, mettre à jour ses données
                 if pokemon.name in pokemon_dict:
                     pokemon_dict[pokemon.name]["count"] += 1
                 else:
-                    # Save all the attributes of the Pokémon
+                    # Ajouter toutes les informations du Pokémon
                     pokemon_dict[pokemon.name] = {
                         "count": 1,
                         "lifePoint": pokemon.lifePoint,
@@ -225,32 +233,35 @@ class Combat:
                         "type2": pokemon.type2,
                     }
 
-                # Update the player's entry with the new Pokémon data
+                # Mettre à jour l'entrée du joueur avec les nouvelles données du Pokémon
                 entry[player_name] = pokemon_dict
                 player_found = True
                 break
 
-        # If the player entry was not found, create a new one
+        # Si l'entrée du joueur n'a pas été trouvée, créer une nouvelle entrée
         if not player_found:
             self.pokedex_list.append({
                 player_name: {
-                   pokemon.name: {
-                    "count": 1,
-                    "lifePoint": pokemon.lifePoint,
-                    "level": pokemon.level,
-
-                    "limitXP": pokemon.limitXP,
-                    "attack": pokemon.attack,
-                    "defence": pokemon.defence,
-                    "type1": pokemon.type1,
-                    "type2": pokemon.type2,
+                    pokemon.name: {
+                        "count": 1,
+                        "lifePoint": pokemon.lifePoint,
+                        "level": pokemon.level,
+                        "attack": pokemon.attack,
+                        "defence": pokemon.defence,
+                        "type1": pokemon.type1,
+                        "type2": pokemon.type2,
                     }
                 }
             })
 
-        # Save the updated Pokédex back to the file
-        with open('poke.json', 'w') as fichier:
-            json.dump(self.pokedex_list, fichier, indent=4)
+        # Sauvegarder les données du Pokédex dans le fichier poke.json
+        try:
+            with open('poke.json', 'w', encoding='utf-8') as file:
+                json.dump(self.pokedex_list, file, indent=4, ensure_ascii=False)
+            print("Données enregistrées dans poke.json")
+        except Exception as e:
+            print(f"Erreur lors de l'enregistrement dans poke.json: {e}")
+
 
 
     
