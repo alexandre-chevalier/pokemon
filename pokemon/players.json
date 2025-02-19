@@ -1,36 +1,42 @@
 [
     {
-        "name": "ky",
+        "name": "alex",
         "pokemon": {
-            "name": "pikachu",
-            "lifePoint": 100,
+            "name": "artikodin",
+            "lifePoint": 175,
             "level": 1,
             "experience": 0,
-            "giveXp": 10,
-            "limitXP": 20,
-            "attack": 10,
-            "defence": 8,
-            "type1": "electric",
+            "giveXp": 60,
+            "limitXP": 120,
+            "attack": 30,
+            "defence": 25,
+            "type1": "vol",
+            "type2": "glace",
+            "KO": false,
+            "link_image": "images",
+            "statut": "normal",
+            "next_evolution": null
+        },
+        "score": 0
+    },
+    {
+        "name": "ajk",
+        "pokemon": {
+            "name": "lugia",
+            "lifePoint": 175,
+            "level": 1,
+            "experience": 0,
+            "giveXp": 100,
+            "limitXP": 120,
+            "attack": 30,
+            "defence": 20,
+            "type1": "vol",
             "type2": null,
             "KO": false,
             "link_image": "images",
             "statut": "normal",
-            "next_evolution": {
-                "name": "raichu",
-                "lifePoint": 250,
-                "level": 1,
-                "experience": 0,
-                "giveXp": 100,
-                "limitXP": 120,
-                "attack": 30,
-                "defence": 25,
-                "type1": "electric",
-                "type2": null,
-                "KO": false,
-                "link_image": "images",
-                "statut": "normal",
-                "next_evolution": null
-            }
-        }
+            "next_evolution": null
+        },
+        "score": 0
     }
 ]

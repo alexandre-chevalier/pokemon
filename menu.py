@@ -86,6 +86,7 @@ class Menu:
         self.rect4 = pygame.Rect(100,100, 1000, 400)
         self.rect5 = pygame.Rect(500,0, 200, 50)
         self.rect6 = pygame.Rect(200, 25,800, 250)
+        self.rect7 = pygame.Rect(500,500,100,100)
         self.color = (32, 78, 246)
         self.running = True
         self.state = "main menu"
@@ -162,34 +163,33 @@ class Menu:
         
         self.draw_keyboard()
         self.player.player_exists()
-        pygame.display.flip()
     
     def screen_pokemon(self):
         pokelist = self.display_pokemon()
-        vertical_pos =self.rect4.top + 20
-        pygame.draw.rect(self.screen, self.color, self.rect4)
         pygame.draw.rect(self.screen, self.color, self.rect5)
 
         text1 = self.font.render(self.text[5], True, (0, 0, 0))
-
-        for pokemon in pokelist:
-            text2 = self.font.render(pokemon, True, (0, 0, 0))
-            font_rect = text2.get_rect(midtop=(self.rect4.centerx, vertical_pos))
-            self.screen.blit(text2, font_rect)
-            vertical_pos += 40
-        
+        for text, rect in pokelist:
+                pygame.draw.rect(self.screen, YELLOW, rect, border_radius=5)
+                text_surface = self.font.render(text, True, BLACK)
+                self.screen.blit(text_surface, text_surface.get_rect(center =rect.center))
         self.screen.blit(text1, text1.get_rect(center=self.rect5.center))
+        self.state = "battle"
 
     def display_pokemon(self):
-        list = []
+        pokelist = []
+        vertical_pos =self.rect4.top + 20
         with open('pokemon\pokemon.json', 'r') as file:
             pokelistJson = json.load(file)
             for i, poke in enumerate(pokelistJson):
-                list.append(f'{i+1}. {poke["name"]}')
-        return list
+                text = f'{i + 1}. {poke["name"]}'
+                rect = pygame.Rect(self.rect4.left + 20, vertical_pos, self.rect4.width - 40, 30)
+                pokelist.append((text, rect))
+                vertical_pos += 40        
+        return pokelist
 
     def screen_game_battle(self):
-        print("battle screen")
+        pygame.draw.rect(self.screen, self.color, self.rect7)
 
     def screen_pokedex(self):
         print("hello")
@@ -216,12 +216,12 @@ class Menu:
                         sys.exit()
                 if self.state == "pokemon":
                     list = self.display_pokemon()
-                    print(list)
-                    mouse_pos = event.pos  # Position de la souris
-                    for zone in zones:  # Parcourir les zones
-                        element, rect = zone  # Décompacter l'élément et le rectangle
-                        if rect.collidepoint(mouse_pos):  # Si on clique dans la zone
-                            print(f"Valeur cliquée : {element}")
+                    for pokemon, button in list:
+                        if button.collidepoint(event.pos):
+                            self.pokemon = pokemon[0]
+                            self.player.choose_pokemon(self.pokemon)
+                            self.player.save_to_file(self.username)
+                                 
                 if self.state == "player":
                     if self.rect5.collidepoint(event.pos):
                         self.state = "main menu"
@@ -234,6 +234,7 @@ class Menu:
             if event.type == pygame.KEYDOWN:
                 if self.state == "player":
                     if event.key == pygame.K_SPACE:
+                        self.player.player_exists()
                         self.state = "pokemon"
                     elif event.key == pygame.K_BACKSPACE:
                             self.username = self.username[:-1]
@@ -257,8 +258,7 @@ class Menu:
             self.screen_pokemon()
 
         elif self.state == "battle":
-            self.sound = random.choice(MUSIC_SCREEN["battle"])
-            pygame.mixer.music.play(1)
+            
             self.background = random.choice(SCREEN_BACKGROUND["battle"])
             self.screen.blit(self.background, (0,0))
             self.screen_game_battle()

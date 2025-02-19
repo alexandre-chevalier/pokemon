@@ -6,8 +6,9 @@ class Player:
         self.name = name
         self.pokemon_file = "pokemon\pokemon.json"
         self.player_file = "pokemon\players.json"
+        self.pokemon = None
 
-        """if self.player_exists(self.player_file):
+        """ if self.player_exists(self.player_file):
             print(f"Vous avez déjà un compte avec ce nom.")
             self.pokemon = self.choose_pokemon(self.pokemon_file, self.player_file)
         else:
@@ -39,15 +40,18 @@ class Player:
                 print(f"{index}. {pokemon['name']}")
 
             if choice.isdigit() and 1 <= int(choice) <= len(pokemon_list):
+                print(self.name)
                 chosen_pokemon = pokemon_list[int(choice) - 1]
                 print(f"Vous avez choisi {chosen_pokemon['name']}.")
+                self.pokemon = chosen_pokemon
+                print(self.pokemon)
                 return chosen_pokemon
             else:
                 print("Entrée invalide. Veuillez entrer un numéro valide.")
 
-    def save_to_file(self):
+    def save_to_file(self, name):
         player_data = {
-            "name": self.name,
+            "name": name,
             "pokemon": self.pokemon,
             "score": 0
         }
@@ -65,13 +69,6 @@ class Player:
         for player in data:
             if player['name'] == self.name:
                 print(f"Le joueur {self.name} existe déjà avec le Pokémon {player['pokemon']['name']}.")
-                print("Voulez-vous choisir un nouveau Pokémon ? (oui/non)")
-                confirm = input().lower()
-                if confirm == 'oui':
-                    self.pokemon = self.choose_pokemon('C:/Users/kylli/Desktop/Spe_ia/pokemon/pokemon.json', self.player_file)
-                    player['pokemon'] = self.pokemon
-                else:
-                    return
 
         data.append(player_data)
 
