@@ -2,7 +2,7 @@ import pygame
 import random
 import json
 import os
-from pokémon import Pokemon
+from pokemon import Pokemon
 from player import Player
 
 
@@ -68,7 +68,7 @@ class Combat:
                     raise ValueError("Le fichier players.json est vide !")
 
                 player = data[0]  # On suppose qu'il y a un seul joueur
-                player_name = player["name"]  # Récupération du nom du joueur
+                player_name = player["name"]  
                 pokemon_data = player.get("pokemon", {})
 
                 # Liste des attributs attendus pour créer un Pokémon
@@ -201,11 +201,11 @@ class Combat:
     def record_winner(self, winner, looser):
         
         # Augmenter l'XP du Pokémon gagnant
-        winner.XP += looser.giveXP
-        print(f"{winner.name} gagne {looser.giveXP} XP ! XP total: {winner.XP}/{winner.limitXP}")
+        winner.experience += looser.giveXp
+        print(f"{winner.name} gagne {looser.giveXp} XP ! XP total: {winner.experience}/{winner.limitXP}")
 
         # Vérifier s'il passe au niveau suivant
-        if winner.XP >= winner.limitXP:
+        if winner.experience >= winner.limitXP:
             winner.level += 1
             winner.XP -= winner.limitXP
             winner.limitXP *= 3  
@@ -220,7 +220,7 @@ class Combat:
         
             for player in players_data:
                 if player["pokemon"]["name"] == winner.name:
-                    player["pokemon"]["XP"] = winner.XP
+                    player["pokemon"]["XP"] = winner.experience
                     player["pokemon"]["level"] = winner.level
                     player["pokemon"]["limitXP"] = winner.limitXP
                     player["pokemon"]["attack"] = winner.attack
@@ -240,7 +240,22 @@ class Combat:
             json.dump({"vainqueur": winner.name}, f)
             f.write("\n")  
    
-    
+    def display_end_message(self, winner, looser):
+        self.screen.fill(BLACK)
+        message1 = font.render(f"{looser.name} is K.O. !", True, RED)
+        message2 = font.render(f"{winner.name} gagne {looser.giveXp} XP ! XP total: {winner.experience}/{winner.limitXP}", True, WHITE)
+        message3 = font.render(f"{winner.name} monte au niveau {winner.level} !", True, YELLOW)
+        message4 = font.render(f"{winner.name} a été mis à jour dans players.json", True, WHITE)
+        message5 = font.render(f"The winner is {winner.name}!", True, YELLOW)
+        
+        self.screen.blit(message1, (50, 200))
+        self.screen.blit(message2, (50, 250))
+        self.screen.blit(message3, (50, 300))
+        self.screen.blit(message4, (50, 350))
+        self.screen.blit(message5, (50, 400))
+        
+        pygame.display.flip()
+        pygame.time.delay(5000)
     def start_battle(self):
         running = True
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
@@ -273,9 +288,11 @@ class Combat:
                 looser = self.pokemon1 if self.pokemon1.KO else self.pokemon2
                 self.display_winner(winner) # Affichage du gagnant
                 self.record_in_pokedex(self.pokemon2)
-                self.record_winner(winner)
+                self.record_winner(winner,looser)
+                self.display_end_message(winner, looser)
 
                 print(f"The winner is {winner.name}!")
+                
                 running = False
 
             pygame.display.flip()
