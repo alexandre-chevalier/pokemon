@@ -3,12 +3,28 @@ import os
 
 class Player:
     def __init__(self, pokemon_filepath, players_filepath):
-        self.name = input("Entrez votre nom: ")
+        self._name = input("Entrez votre nom: ")
         if self.player_exists(players_filepath):
             print(f"Vous avez déjà un compte avec ce nom.")
-            self.pokemon = self.choose_pokemon(pokemon_filepath, players_filepath)
+            self._pokemon = self.choose_pokemon(pokemon_filepath, players_filepath)
         else:
-            self.pokemon = self.choose_pokemon(pokemon_filepath, players_filepath)
+            self._pokemon = self.choose_pokemon(pokemon_filepath, players_filepath)
+
+    @property
+    def get_name(self):
+        return self._name
+
+    @get_name.setter
+    def get_name(self, value):
+        self._name = value
+
+    @property
+    def pokemon(self):
+        return self._pokemon
+
+    @pokemon.setter
+    def pokemon(self, value):
+        self._pokemon = value
 
     def player_exists(self, filepath):
         if os.path.exists(filepath):
@@ -16,7 +32,7 @@ class Player:
                 with open(filepath, 'r') as file:
                     players = json.load(file)
                     for player in players:
-                        if player['name'] == self.name:
+                        if player['name'] == self._name:
                             return True
             except json.JSONDecodeError:
                 return False
@@ -47,8 +63,8 @@ class Player:
 
     def save_to_file(self, filepath):
         player_data = {
-            "name": self.name,
-            "pokemon": self.pokemon,
+            "name": self._name,
+            "pokemon": self._pokemon,
             "score": 0
         }
 
@@ -63,13 +79,13 @@ class Player:
 
         # Vérifier si le joueur existe déjà
         for player in data:
-            if player['name'] == self.name:
-                print(f"Le joueur {self.name} existe déjà avec le Pokémon {player['pokemon']['name']}.")
+            if player['name'] == self._name:
+                print(f"Le joueur {self._name} existe déjà avec le Pokémon {player['pokemon']['name']}.")
                 print("Voulez-vous choisir un nouveau Pokémon ? (oui/non)")
                 confirm = input().lower()
                 if confirm == 'oui':
-                    self.pokemon = self.choose_pokemon('C:/Users/kylli/Desktop/Spe_ia/pokemon/pokemon.json', filepath)
-                    player['pokemon'] = self.pokemon
+                    self._pokemon = self.choose_pokemon('C:/Users/kylli/Desktop/Spe_ia/pokemon/pokemon.json', filepath)
+                    player['pokemon'] = self._pokemon
                 else:
                     return
 
