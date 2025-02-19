@@ -1,0 +1,14 @@
+[
+   
+    {"name":"Paul", 
+    "liste_pokemons":[{"name_poke": "fdgsfg", "age": 9},{"name_poke": "uuiui", "age": 9}, {"name_poke": "jhjgsfg", "age": 9}],
+    "scrore": 123232
+     },
+    
+     {"name":"Christophe", 
+    "liste_pokemons":[{"name_poke": "fdgsfg", "age": 9},{"name_poke": "uuiui", "age": 9}, {"name_poke": "jhjgsfg", "age": 9}],
+    "scrore": 123232
+     }
+
+
+]

@@ -1,7 +1,6 @@
 import json
-from pokemon import * 
 import os
-
+from pokemon import *
 BASE_DIR = r"C:\Users\Windows\Desktop\projets\1a\pokemon"
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 
