@@ -4,7 +4,7 @@ import os
 import json
 import random
 from player import *
-
+from manage_pokedex import *
 
 # Pygame start
 pygame.init()
@@ -21,10 +21,6 @@ ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 # Screen size
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
-
-# background
-
-
 
 # Colors used
 BLACK = (0, 0, 0)
@@ -52,7 +48,7 @@ try:
             pygame.transform.scale(pygame.image.load(os.path.join(IMAGE_DIR, "background.png")), (SCREEN_WIDTH, SCREEN_HEIGHT)),
             pygame.transform.scale(pygame.image.load(os.path.join(IMAGE_DIR, "background2.jpg")), (SCREEN_WIDTH, SCREEN_HEIGHT)),
                     ],
-        "score": pygame.transform.scale(pygame.image.load(os.path.join(IMAGE_DIR, "book.jpg")), (SCREEN_WIDTH, SCREEN_HEIGHT))
+        "score": pygame.transform.scale(pygame.image.load(os.path.join(IMAGE_DIR, "tokyo.png")), (SCREEN_WIDTH, SCREEN_HEIGHT))
                 }
 except FileNotFoundError as e:
     print(f"nous n'avons pas trouver les images {e}")
@@ -189,11 +185,13 @@ class Menu:
         return pokelist
 
     def screen_game_battle(self):
-        pygame.draw.rect(self.screen, self.color, self.rect7)
+        print("hello")
 
     def screen_pokedex(self):
-        print("hello")
-        pygame.display.flip()
+        pokedex = Pokedex(self.username)
+        pokedex.display_title()
+        pokedex.displayBlackButton()
+        pokedex.displayPokedex()
 
     def event(self):
         for event in pygame.event.get():
@@ -208,10 +206,9 @@ class Menu:
                 if self.state == "main menu":
                     if self.rect1.collidepoint(event.pos):
                         self.state = "player"
-                    if self.rect2.collidepoint(event.pos):
+                    elif self.rect2.collidepoint(event.pos):
                         self.state = "pokedex"
-                        print(self.state)
-                    if self.rect3.collidepoint(event.pos):
+                    elif self.rect3.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
                 if self.state == "pokemon":
@@ -220,17 +217,13 @@ class Menu:
                         if button.collidepoint(event.pos):
                             self.pokemon = pokemon[0]
                             self.player.choose_pokemon(self.pokemon)
-                            self.player.save_to_file(self.username)
-                                 
+                            self.player.save_to_file(self.username)             
                 if self.state == "player":
                     if self.rect5.collidepoint(event.pos):
                         self.state = "main menu"
                 elif self.state == "score":
                     if self.rect5.collidepoint(event.pos):
                         self.state = "main menu"
-                else:
-                    pygame.quit()
-                    sys.exit()
             if event.type == pygame.KEYDOWN:
                 if self.state == "player":
                     if event.key == pygame.K_SPACE:
@@ -266,7 +259,7 @@ class Menu:
         elif self.state == "pokedex":
             self.background = SCREEN_BACKGROUND["score"]
             self.screen.blit(self.background, (0,0))
-            self.screen_enter_player()
+            
         pygame.display.flip()
 
     def display(self):

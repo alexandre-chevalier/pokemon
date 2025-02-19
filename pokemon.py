@@ -3,11 +3,11 @@ import os
 import json
 
 class Pokemon:
-    def __init__(self, name, lifePoint, level, XP, giveXP, limitXP,  attack, defence, type1, type2, next_evolution):
+    def __init__(self, name, lifePoint, level, experience, giveXP, limitXP,  attack, defence, type1, type2, next_evolution):
         self.name = name
         self.lifePoint = lifePoint
         self.level = level
-        self.experience = XP
+        self.experience = experience
         self.giveXp = giveXP
         self.limitXP = limitXP
         self.attack = attack
