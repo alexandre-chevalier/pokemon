@@ -196,40 +196,59 @@ class Combat:
         return self.pokedex_list
         
     def record_pokedex(self, pokemon):
-        # Récupérer la liste des Pokémon dans le Pokédex
+        # Get the list of Pokémon in the Pokédex
         self.get_pokedex_list()
 
-        if not self.player:  # Vérifier si le joueur est défini
+        if not self.player:  # Check if the player is defined
             return
 
-        player_name = str(self.player)  # Convertir l'objet Player en chaîne de caractères
+        player_name = str(self.player)  # Convert Player object to string
         player_found = False
 
-        # Itérer à travers les entrées dans le Pokédex
+        # Iterate over the Pokédex entries
         for entry in self.pokedex_list:
-            if player_name in entry:  # Chercher l'entrée du joueur par son nom
+            if player_name in entry:  # Look for the player's entry by name
                 pokemon_dict = entry[player_name]
 
-                # Si le dictionnaire des Pokémon est une liste, le convertir en format dictionnaire
-                if isinstance(pokemon_dict, list):
-                    pokemon_dict = {poke: 1 for poke in pokemon_dict}
-
-                # Si le Pokémon a déjà été rencontré, augmenter son compteur
+                # If the Pokémon is already in the dictionary, update its data
                 if pokemon.name in pokemon_dict:
-                    pokemon_dict[pokemon.name] += 1
+                    pokemon_dict[pokemon.name]["count"] += 1
                 else:
-                    pokemon_dict[pokemon.name] = 1
+                    # Save all the attributes of the Pokémon
+                    pokemon_dict[pokemon.name] = {
+                        "count": 1,
+                        "lifePoint": pokemon.lifePoint,
+                        "level": pokemon.level,
+                        "attack": pokemon.attack,
+                        "defence": pokemon.defence,
+                        "type1": pokemon.type1,
+                        "type2": pokemon.type2,
+                    }
 
-                # Mettre à jour l'entrée du joueur avec les nouvelles données du Pokémon
+                # Update the player's entry with the new Pokémon data
                 entry[player_name] = pokemon_dict
                 player_found = True
                 break
 
-        # Si l'entrée du joueur n'a pas été trouvée, créer une nouvelle entrée pour le joueur et ses Pokémon
+        # If the player entry was not found, create a new one
         if not player_found:
-            self.pokedex_list.append({player_name: {pokemon.name: 1}})
+            self.pokedex_list.append({
+                player_name: {
+                   pokemon.name: {
+                    "count": 1,
+                    "lifePoint": pokemon.lifePoint,
+                    "level": pokemon.level,
 
-        # Sauvegarder les données mises à jour dans le fichier Pokédex
+                    "limitXP": pokemon.limitXP,
+                    "attack": pokemon.attack,
+                    "defence": pokemon.defence,
+                    "type1": pokemon.type1,
+                    "type2": pokemon.type2,
+                    }
+                }
+            })
+
+        # Save the updated Pokédex back to the file
         with open('poke.json', 'w') as fichier:
             json.dump(self.pokedex_list, fichier, indent=4)
 
