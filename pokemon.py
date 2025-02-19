@@ -7,7 +7,7 @@ class Pokemon:
         self.name = name
         self.lifePoint = lifePoint
         self.level = level
-        self.experience = XP
+        self.experience = experience
         self.giveXp = giveXP
         self.limitXP = limitXP
         self.attack = attack
@@ -52,7 +52,6 @@ class Pokemon:
     def is_ko(self):
         return self.lifePoint <= 0
     
-
 #########################################################################################################################
     def record_pokemon(self):
         pokemon_dict_list = [pokemon.to_dict() for pokemon in self.pokemon_list]
@@ -117,10 +116,12 @@ class Pokemon:
         }
 
     def level_up(self, opponent):
+        self.experience += opponent.giveXp
         if self.experience >= self.limitXP:
+            print(f"le pokemon a level up :{self.name} ")
             self.level +=1
             self.limitXP *= 3
-            self.experience = 0
+            self.experience = self.experience - self.limitXP
             self.giveXp +=20
             self.lifePoint  += 100
             self.attack     += 25
@@ -134,7 +135,7 @@ class Pokemon:
     def __str__(self):
             dictio =  f"""
                 name : {self.name}
-                lifepoint : {self.lifePoint}
+                lifePoint : {self.lifePoint}
                 level : {self.level}
                 xp : {self.experience}
                 giveXp : {self.giveXp}
@@ -183,5 +184,4 @@ pikachu.add_to_list(hoho)
 
 
 listing = pikachu.get_pokemon_list()
-
 
