@@ -44,7 +44,7 @@ class Combat:
 }
 
 
-    def __init__(self, player):
+    def __init__(self,player):
         self.player = player
         self.pokemon1 = self.load_player_pokemon()
         pokemon_list = self.load_pokemon_list()
@@ -59,31 +59,37 @@ class Combat:
         self.pokemon2_image = self.load_and_scale_image(self.pokemon2.name, (150, 150))
     
     def load_player_pokemon(self):
-         
         """Charge le Pokémon actif du joueur depuis 'players.json'"""
         try:
             with open('players.json', 'r') as file:
                 data = json.load(file)
+
                 if not data:
                     raise ValueError("Le fichier players.json est vide !")
 
-                player_data = data[0]  # Supposons un seul joueur pour l'instant
-                pokemon_data = player_data.get("pokemon", {})
+                player = data[0]  # On suppose qu'il y a un seul joueur
+                player_name = player["name"]  # Récupération du nom du joueur
+                pokemon_data = player.get("pokemon", {})
+
+                # Liste des attributs attendus pour créer un Pokémon
                 expected_keys = {"name", "lifePoint", "level", "XP", "giveXP", "limitXP", "attack", "defence", "type1", "type2", "next_evolution"}
                 filtered_data = {k: v for k, v in pokemon_data.items() if k in expected_keys}
-                return Pokemon(**filtered_data) 
 
-                
+                return Pokemon(**filtered_data)
+
         except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
             print(f"Erreur lors du chargement du Pokémon du joueur: {e}")
-            return None
+        return None, None
+
+                
+        
 
     
     def load_pokemon_list(self):
         try:
           with open('pokemon.json', 'r') as file:
             data = json.load(file)
-            # Liste des attributs attendus dans la classe `Pokemon`
+            # Liste des attributs attendus dans la classe Pokemon
             expected_keys = {"name","lifePoint", "level", "XP", "giveXP", "limitXP",  "attack", "defence", "type1", "type2", "next_evolution"}
             # Filtrer uniquement les clés valides
             return [Pokemon(**{k: v for k, v in p.items() if k in expected_keys}) for p in data]
@@ -128,7 +134,9 @@ class Combat:
     def calculate_multiplier(self, attacker, target):
         multiplier1 = self.TYPE_EFFICACY.get((attacker.type1, target.type1), 1)
         multiplier2 = self.TYPE_EFFICACY.get((attacker.type1, target.type2), 1) if target.type2 else 1
-        return multiplier1 * multiplier2  
+        multiplier3 = self.TYPE_EFFICACY.get((attacker.type2, target.type1), 1) if attacker.type2 else 1
+        multiplier4 = self.TYPE_EFFICACY.get((attacker.type2, target.type2), 1) if attacker.type2 and target.type2 else 1
+        return multiplier1 * multiplier2 * multiplier3 * multiplier4
     
     def play_attack_sound(self):
         try:
@@ -173,7 +181,65 @@ class Combat:
         self.screen.blit(winner_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
         pygame.display.flip()
         pygame.time.delay(3000) 
+        
+    def record_in_pokedex(self, pokemon):
+        try:
+         if not hasattr(self, "pokedex"):
+             self.pokedex = []
+             if os.path.exists("pokedex.json"):
+                 with open("pokedex.json", "r") as f:
+                     self.pokedex = json.load(f)
          
+         if pokemon.name not in self.pokedex:
+             self.pokedex.append(pokemon.name)
+             with open("pokedex.json", "w") as f:
+                 json.dump(self.pokedex, f, indent=4)
+             print(f"{pokemon.name} ajouté au Pokédex !")
+        except Exception as e:
+         print(f"Erreur lors de l'ajout au Pokédex : {e}")
+    
+    def record_winner(self, winner, looser):
+        
+        # Augmenter l'XP du Pokémon gagnant
+        winner.XP += looser.giveXP
+        print(f"{winner.name} gagne {looser.giveXP} XP ! XP total: {winner.XP}/{winner.limitXP}")
+
+        # Vérifier s'il passe au niveau suivant
+        if winner.XP >= winner.limitXP:
+            winner.level += 1
+            winner.XP -= winner.limitXP
+            winner.limitXP *= 3  
+            winner.attack += 2  
+            winner.defence += 2
+        print(f"{winner.name} monte au niveau {winner.level} !")
+
+    # Sauvegarder les nouvelles stats du gagnant dans players.json
+        try:
+            with open("players.json", "r") as f:
+                players_data = json.load(f)
+        
+            for player in players_data:
+                if player["pokemon"]["name"] == winner.name:
+                    player["pokemon"]["XP"] = winner.XP
+                    player["pokemon"]["level"] = winner.level
+                    player["pokemon"]["limitXP"] = winner.limitXP
+                    player["pokemon"]["attack"] = winner.attack
+                    player["pokemon"]["defence"] = winner.defence
+                    break
+        
+            with open("players.json", "w") as f:
+                json.dump(players_data, f, indent=4)
+        
+                print(f"{winner.name} a été mis à jour dans players.json")
+
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde de {winner.name} : {e}")
+
+    # Ajouter au fichier vainqueurs.json
+        with open("vainqueurs.json", "a") as f:
+            json.dump({"vainqueur": winner.name}, f)
+            f.write("\n")  
+   
     
     def start_battle(self):
         running = True
@@ -204,9 +270,12 @@ class Combat:
 
             if self.pokemon1.KO or self.pokemon2.KO:
                 winner = self.pokemon1 if not self.pokemon1.KO else self.pokemon2
-                self.display_winner(winner)  # Affichage du gagnant
+                looser = self.pokemon1 if self.pokemon1.KO else self.pokemon2
+                self.display_winner(winner) # Affichage du gagnant
+                self.record_in_pokedex(self.pokemon2)
+                self.record_winner(winner)
 
-                #print(f"The winner is {winner.name}!")
+                print(f"The winner is {winner.name}!")
                 running = False
 
             pygame.display.flip()
@@ -214,9 +283,8 @@ class Combat:
         pygame.quit()
 
 # Example usage
-player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/pokedex.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
+player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/pokemon.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
 
-#player.save_to_file(os.path.join(BASE_DIR, "players.json"))
+player.save_to_file(os.path.join(BASE_DIR, "players.json"))
 combat = Combat(player)
 combat.start_battle()
-
