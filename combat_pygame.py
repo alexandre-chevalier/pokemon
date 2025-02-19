@@ -2,7 +2,9 @@ import pygame
 import random
 import json
 import os
-from pokémon import *
+from pokémon import Pokemon
+from player import Player
+
 
 # Initialize Pygame
 pygame.init()
@@ -28,14 +30,6 @@ font_path = os.path.join(BASE_DIR,"Audiowide-Regular.ttf")
 font = pygame.font.Font(font_path, 36)
 
 
-# List of possible opponent Pokémon
-#opponent_pokemon_list = [
-   # Pokemon("Salamèche", 100, 1, 0, 10, 20, 10, 8, "Feu", None, None),
-   # Pokemon("Carapuce", 100, 1, 0, 10, 20, 10, 2, "Eau", None, None),
-    #Pokemon("Bulbizarre", 100, 1, 0, 10, 20, 10, 8, "Plante", None, None),
-    
-#]
-
 class Combat:
     TYPE_EFFICACY = {
     ("Spectre", "Spectre"): 2, ("Spectre", "Psy"): 2, ("Spectre", "Normal"): 0, ("Spectre", "Combat"): 0,
@@ -50,8 +44,9 @@ class Combat:
 }
 
 
-    def __init__(self, pokemon1):
-        self.pokemon1 = pokemon1
+    def __init__(self, player):
+        self.player = player
+        self.pokemon1 = self.load_player_pokemon()
         pokemon_list = self.load_pokemon_list()
         self.pokemon2 = (random.choice(pokemon_list)) 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -63,6 +58,26 @@ class Combat:
         self.pokemon1_image = self.load_and_scale_image(self.pokemon1.name, (150, 150))
         self.pokemon2_image = self.load_and_scale_image(self.pokemon2.name, (150, 150))
     
+    def load_player_pokemon(self):
+         
+        """Charge le Pokémon actif du joueur depuis 'players.json'"""
+        try:
+            with open('players.json', 'r') as file:
+                data = json.load(file)
+                if not data:
+                    raise ValueError("Le fichier players.json est vide !")
+
+                player_data = data[0]  # Supposons un seul joueur pour l'instant
+                pokemon_data = player_data.get("pokemon", {})
+                expected_keys = {"name", "lifePoint", "level", "XP", "giveXP", "limitXP", "attack", "defence", "type1", "type2", "next_evolution"}
+                filtered_data = {k: v for k, v in pokemon_data.items() if k in expected_keys}
+                return Pokemon(**filtered_data) 
+
+                
+        except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+            print(f"Erreur lors du chargement du Pokémon du joueur: {e}")
+            return None
+
     
     def load_pokemon_list(self):
         try:
@@ -129,6 +144,11 @@ class Combat:
         damage = max(0, (attacker.attack * multiplier) - target.defence)
         target.lifePoint -= damage
         print(f"{attacker.name} attacks {target.name} with a multiplier of {multiplier}. Damage dealt: {damage}")
+         
+        # Display damage on screen
+        damage_text = font.render(f"{attacker.name} deals {damage} damage to {target.name}!", True, RED)
+        self.screen.blit(damage_text, (50, 300))
+
         if target.lifePoint <= 0:
             target.KO = True
             print(f"{target.name} is K.O. !")
@@ -152,7 +172,8 @@ class Combat:
         winner_text = font.render(f"Winner: {winner.name}!", True, YELLOW)
         self.screen.blit(winner_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
         pygame.display.flip()
-        pygame.time.delay(3000)  
+        pygame.time.delay(3000) 
+         
     
     def start_battle(self):
         running = True
@@ -193,5 +214,9 @@ class Combat:
         pygame.quit()
 
 # Example usage
-combat = Combat(pikachu)
+player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
+
+#player.save_to_file(os.path.join(BASE_DIR, "players.json"))
+combat = Combat(player)
 combat.start_battle()
+
