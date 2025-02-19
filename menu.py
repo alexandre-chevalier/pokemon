@@ -103,6 +103,7 @@ class Menu:
         self.sound = MUSIC_SCREEN
         self.logo = pygame.transform.scale(pygame.image.load(os.path.join(IMAGE_DIR, "logo.png")), (800, 250))
         self.username = ""
+        self.pokemon = 0
         self.player = Player(self.username)
 
     def create_keyboard(self):
@@ -187,8 +188,6 @@ class Menu:
                 list.append(f'{i+1}. {poke["name"]}')
         return list
 
-
-
     def screen_game_battle(self):
         print("battle screen")
 
@@ -216,11 +215,13 @@ class Menu:
                         pygame.quit()
                         sys.exit()
                 if self.state == "pokemon":
-                    for pokemon, button in self.pokemon_buttons:
-                        if button.collidepoint(event.pos):
-                            print(f"You clicked on: {pokemon}")
-                            # Handle the Pokémon click here
-                            self.handle_pokemon_click(pokemon)
+                    list = self.display_pokemon()
+                    print(list)
+                    mouse_pos = event.pos  # Position de la souris
+                    for zone in zones:  # Parcourir les zones
+                        element, rect = zone  # Décompacter l'élément et le rectangle
+                        if rect.collidepoint(mouse_pos):  # Si on clique dans la zone
+                            print(f"Valeur cliquée : {element}")
                 if self.state == "player":
                     if self.rect5.collidepoint(event.pos):
                         self.state = "main menu"

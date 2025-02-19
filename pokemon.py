@@ -116,10 +116,12 @@ class Pokemon:
         }
 
     def level_up(self, opponent):
+        self.experience += opponent.giveXp
         if self.experience >= self.limitXP:
+            print(f"le pokemon a level up :{self.name} ")
             self.level +=1
             self.limitXP *= 3
-            self.experience = 0
+            self.experience = self.experience - self.limitXP
             self.giveXp +=20
             self.lifePoint  += 100
             self.attack     += 25
