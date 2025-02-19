@@ -4,7 +4,7 @@ import json
 import os
 from pokemon import Pokemon
 from player import Player
-from manage_pokedex import Pokedex
+
 
 # Initialize Pygame
 pygame.init()
@@ -52,7 +52,6 @@ class Combat:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Battle")
         self.attack_button_rect = None
-        self.pokedex = Pokedex(self.player.name)
         self.pokemon_list = []
         self.pokedex_list = []
         self.pokemon_met = []
@@ -195,43 +194,45 @@ class Combat:
                 json.dump(self.pokedex_list, fichier, indent=4)
     
         return self.pokedex_list
-    
+        
     def record_pokedex(self, pokemon):
-        # Get the list of Pokémon in the Pokédex
+        # Récupérer la liste des Pokémon dans le Pokédex
         self.get_pokedex_list()
 
-        if not self.name:  
-            return  
+        if not self.player:  # Vérifier si le joueur est défini
+            return
 
+        player_name = str(self.player)  # Convertir l'objet Player en chaîne de caractères
         player_found = False
 
-        # Iterate through the entries in the Pokédex
+        # Itérer à travers les entrées dans le Pokédex
         for entry in self.pokedex_list:
-            if self.name in entry:
-                pokemon_dict = entry[self.name]
+            if player_name in entry:  # Chercher l'entrée du joueur par son nom
+                pokemon_dict = entry[player_name]
 
-                # If the Pokémon dictionary is a list, convert it to a dictionary format
-                if isinstance(pokemon_dict, list):  
-                    pokemon_dict = {poke: 1 for poke in pokemon_dict}  
+                # Si le dictionnaire des Pokémon est une liste, le convertir en format dictionnaire
+                if isinstance(pokemon_dict, list):
+                    pokemon_dict = {poke: 1 for poke in pokemon_dict}
 
-                # If the Pokémon has been encountered before, increase its count
-                if self.pokemon_met in pokemon_dict:
-                    pokemon_dict[self.pokemon_met] += 1
+                # Si le Pokémon a déjà été rencontré, augmenter son compteur
+                if pokemon.name in pokemon_dict:
+                    pokemon_dict[pokemon.name] += 1
                 else:
-                    pokemon_dict[self.pokemon_met] = 1
+                    pokemon_dict[pokemon.name] = 1
 
-                # Update the player entry with the new Pokémon data
-                entry[self.name] = pokemon_dict
+                # Mettre à jour l'entrée du joueur avec les nouvelles données du Pokémon
+                entry[player_name] = pokemon_dict
                 player_found = True
-                break  
+                break
 
-        # If the player entry is not found, create a new entry for the player and Pokémon
-        if not player_found:  
-            self.pokedex_list.append({self.name: {self.pokemon_met: 1}})
+        # Si l'entrée du joueur n'a pas été trouvée, créer une nouvelle entrée pour le joueur et ses Pokémon
+        if not player_found:
+            self.pokedex_list.append({player_name: {pokemon.name: 1}})
 
-        # Save the updated Pokédex data to the file
+        # Sauvegarder les données mises à jour dans le fichier Pokédex
         with open('poke.json', 'w') as fichier:
             json.dump(self.pokedex_list, fichier, indent=4)
+
 
     
     def record_winner(self, winner, looser):
@@ -296,7 +297,6 @@ class Combat:
     def start_battle(self):
         running = True
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
-        pokedex_list = self.pokedex.get_pokedex_list()
         while running:
             self.screen.fill(BLACK)
             self.display_characteristics()
