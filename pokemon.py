@@ -3,7 +3,7 @@ import os
 import json
 
 class Pokemon:
-    def __init__(self, name, lifePoint, level, XP, giveXP, limitXP,  attack, defence, type1, type2, next_evolution):
+    def __init__(self, name, lifePoint, level, XP, giveXP, limitXP, attack, defence, type1, type2, next_evolution):
         self.name = name
         self.lifePoint = lifePoint
         self.level = level
@@ -50,8 +50,7 @@ class Pokemon:
         return image
 
     def is_ko(self):
-        if self.lifePoint <= 0:
-            self.KO = True
+        return self.lifePoint <= 0
     
 
 #########################################################################################################################
@@ -185,4 +184,4 @@ pikachu.add_to_list(hoho)
 
 listing = pikachu.get_pokemon_list()
 
-print(listing)
+
