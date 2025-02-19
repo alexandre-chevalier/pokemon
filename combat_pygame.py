@@ -214,7 +214,7 @@ class Combat:
         pygame.quit()
 
 # Example usage
-player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
+player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/pokedex.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
 
 #player.save_to_file(os.path.join(BASE_DIR, "players.json"))
 combat = Combat(player)
