@@ -210,7 +210,7 @@ class Combat:
         if not self.player:  # Vérifier si le joueur est défini
             return
 
-        player_name = str(self.player)  # Convertir l'objet Player en chaîne
+        player_name = self.player.name  # Convertir l'objet Player en chaîne
         player_found = False
 
         # Parcourir les entrées du Pokédex
@@ -324,9 +324,11 @@ class Combat:
         
         pygame.display.flip()
         pygame.time.delay(5000)
+    
     def start_battle(self):
         running = True
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
+        self.record_pokedex(self.pokemon2)
         while running:
             self.screen.fill(BLACK)
             self.display_characteristics()
@@ -354,7 +356,6 @@ class Combat:
                 winner = self.pokemon1 if not self.pokemon1.KO else self.pokemon2
                 looser = self.pokemon1 if self.pokemon1.KO else self.pokemon2
                 self.display_winner(winner) # Affichage du gagnant
-                self.record_pokedex(self.pokemon2)
                 self.record_winner(winner,looser)
                 self.display_end_message(winner, looser)
 
@@ -367,8 +368,11 @@ class Combat:
         pygame.quit()
 
 # Example usage
-player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/pokemon.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
 
+player = Player('C:/Users/ndiay/Desktop/lptf/projets/pokemon/pokemon.json', 'C:/Users/ndiay/Desktop/lptf/projets/pokemon/players.json')
+with open('poke.json', 'r', encoding='utf-8') as file:
+    data = json.load(file)
+    print(json.dumps(data, indent=4, ensure_ascii=False))  # Affiche bien formaté
 player.save_to_file(os.path.join(BASE_DIR, "players.json"))
 combat = Combat(player)
 combat.start_battle()
