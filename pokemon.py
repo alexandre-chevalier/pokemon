@@ -19,6 +19,23 @@ class Pokemon:
         self.statut = "normal"
         self.next_evolution = next_evolution
         self.pokemon_list = []
+        self.status_effects = {}
+        
+    def add_status_effect(self, effect, duration):
+        self.status_effects[effect] = duration
+
+    def decrement_status_effects(self):
+        # Decrease the duration of each status effect
+        effects_to_remove = []
+        for effect, duration in self.status_effects.items():
+            if duration > 1:
+                self.status_effects[effect] = duration - 1
+            else:
+                effects_to_remove.append(effect)
+
+        # Remove effects with duration 0
+        for effect in effects_to_remove:
+            del self.status_effects[effect]    
 
     def evolve(self, pokemon):
         if pokemon:
