@@ -7,11 +7,11 @@ import random
 pygame.init()
 pygame.font.init()
 # Screen size
-BASE_DIR = r"C:\Users\alexc\Desktop\laplateforme\projet\annee1\pokemon"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ways to files
-IMAGE_DIR = os.path.join(BASE_DIR, "images")
-SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+IMAGE_DIR = os.path.join(BASE_DIR, "data/images")
+SOUND_DIR = os.path.join(BASE_DIR, "data/sounds")
 
 
 

@@ -13,7 +13,7 @@ class Player:
             self.pokemon = self.choose_pokemon(self.pokemon_file, self.player_file)
         else:
             self.pokemon = self.choose_pokemon(self.pokemon_file, self.player_file)"""
-        
+       
     def player_exists(self):
         if os.path.exists(self.player_file):
             try:
@@ -74,4 +74,20 @@ class Player:
 
         with open(self.player_file, 'w') as file:
             json.dump(data, file, indent=4)
+
+    # Getter for name
+    def get_name(self):
+        return self.name
+
+    # Setter for name
+    def set_name(self, name):
+        self.name = name
+
+    # Getter for pokemon
+    def get_pokemon(self):
+        return self.pokemon
+
+    # Setter for pokemon
+    def set_pokemon(self, pokemon):
+        self.pokemon = pokemon
 
