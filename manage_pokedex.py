@@ -7,11 +7,12 @@ import random
 pygame.init()
 pygame.font.init()
 # Screen size
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = r"C:\Users\alexc\Desktop\laplateforme\projet\annee1\pokemon\data"
 
 # ways to files
-IMAGE_DIR = os.path.join(BASE_DIR, "data/images")
-SOUND_DIR = os.path.join(BASE_DIR, "data/sounds")
+IMAGE_DIR = os.path.join(BASE_DIR, "images")
+SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 
 
 
@@ -31,7 +32,13 @@ DARK_BLUE = (0, 0, 128)
 RED = (250, 0, 0)
 
 
-font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
+try:
+    font_path = os.path.join(ASSETS_DIR, "Audiowide-Regular.ttf")
+except FileNotFoundError:
+    print("La police n'a pas été trouvée. Utilisation de la police par défaut.")
+    font_path = pygame.font.Font(None, 36)
+
+
 
 class Pokedex:
     
@@ -54,41 +61,43 @@ class Pokedex:
 
 
     def displayPokedex(self):
-        # Création du rectangle semi-transparent
+    # Création du rectangle semi-transparent
         scoreSurface = pygame.Surface((1000, 440), pygame.SRCALPHA)
-        scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH//2, 310))
+        scoreRect = scoreSurface.get_rect(center=(SCREEN_WIDTH // 2, 310))
         pygame.draw.rect(scoreSurface, (0, 0, 0, 180), (0, 0, 1000, 440), border_radius=15)
-        
+
         # Chargement de la liste du Pokédex
         self.get_pokedex_list()
-        
-        # Définition de la police
-        font = pygame.font.Font(None, 30)  # Police par défaut, taille 30
-        text_color = YELLOW # Blanc
 
-        # Position de départ pour afficher le texte
-        start_x = 10  # Décalage du bord gauche
-        start_y = 10
-        line_spacing = 50 
+        # Définition des paramètres d'affichage
+        text_color = YELLOW  # Couleur du texte
+        start_x = 20  # Décalage du bord gauche
+        start_y = 20
+        line_spacing = 40  
 
+        # Titre des colonnes avec self.poke_font
         header_text = "Nom          Niv.       Type         Def/Att    PV     Nb"
         header_surface = self.poke_font.render(header_text, True, text_color)
-        scoreSurface.blit(header_surface, (start_x, start_y))  
-
+        scoreSurface.blit(header_surface, (start_x, start_y))
         start_y += line_spacing
-        
-        if self.name:  # Assure-toi que self.player_name contient bien le nom du joueur    
-            for entry in self.pokedex_list:
-                    if self.name in entry:
-                        pokemon_list = entry[self.name]
-                        
-                        for index, pokemon in enumerate(pokemon_list):
-                                pokedex_text = f'{pokemon['name']}       {pokemon['level']}   {pokemon['type1']}/{pokemon['type2']}   {pokemon['defence']}/{pokemon['attack']}      {pokemon['lifePoint']}       '
-                                text_surface = self.poke_font.render(pokedex_text, True, text_color)
-                                scoreSurface.blit(text_surface, (start_x, start_y + index * line_spacing))  # 30 pixels entre chaque ligne
 
-            # Affichage du rectangle sur l'écran
-            self.screen.blit(scoreSurface, scoreRect.topleft)
+        # Vérifier que le joueur existe
+        if self.name:
+            for entry in self.pokedex_list:
+                if self.name in entry:  # Vérifie si le joueur est enregistré
+                    pokemon_list = entry[self.name]  # Récupère les Pokémon du joueur
+                    
+                    for index, (pokemon_name, stats) in enumerate(pokemon_list.items()):  
+                        type_info = f"{stats['type1']}/{stats['type2']}" if stats["type2"] else stats["type1"]
+                        
+                        # Formatage des infos du Pokémon
+                        pokedex_text = f"{pokemon_name:<12} {stats['level']:<5} {type_info:<10} {stats['defence']}/{stats['attack']} {stats['lifePoint']:<5} {stats['count']}"
+
+                        text_surface = self.poke_font.render(pokedex_text, True, text_color)
+                        scoreSurface.blit(text_surface, (start_x, start_y + index * line_spacing))  
+
+        # Afficher le rectangle contenant le Pokédex
+        self.screen.blit(scoreSurface, scoreRect)
 
     
     def display_title(self):
@@ -137,13 +146,9 @@ class Pokedex:
         
         return self.pokedex_list
 
-    
-
-    
-
-
-    def record_pokedex(self):
+    def record_pokedex(self, pokemon):
         self.get_pokedex_list()  
+
         
         if not self.name:  
             return  
@@ -175,7 +180,7 @@ class Pokedex:
         with open('poke.json', 'w') as fichier:
             json.dump(self.pokedex_list, fichier, indent=4)
 
-    """        
+            
     def run(self):
             print("Méthode run() appelée")
             running = True
@@ -204,5 +209,7 @@ class Pokedex:
                             running = False  # close window    
             self.displayPokedex()                 
             pygame.quit()  
-        """
-
+"""
+if __name__ == "__main__": 
+ pokedex= Pokedex("ky")
+ pokedex.run()"""
