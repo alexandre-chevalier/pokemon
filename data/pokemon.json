@@ -11,7 +11,7 @@
         "type1": "electric",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "pikachu",
         "statut": "normal",
         "next_evolution": {
             "name": "raichu",
@@ -25,7 +25,7 @@
             "type1": "electric",
             "type2": null,
             "KO": false,
-            "link_image": "images",
+            "link_image": "raichu",
             "statut": "normal",
             "next_evolution": null
         }
@@ -42,7 +42,7 @@
         "type1": "eau",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "carapuce",
         "statut": "normal",
         "next_evolution": {
             "name": "carabaffe",
@@ -56,7 +56,7 @@
             "type1": "eau",
             "type2": null,
             "KO": false,
-            "link_image": "images",
+            "link_image": "carabaffe",
             "statut": "normal",
             "next_evolution": {
                 "name": "tortank",
@@ -70,7 +70,7 @@
                 "type1": "eau",
                 "type2": null,
                 "KO": false,
-                "link_image": "images",
+                "link_image": "tortank",
                 "statut": "normal",
                 "next_evolution": null
             }
@@ -88,7 +88,7 @@
         "type1": "feu",
         "type2": "terre",
         "KO": false,
-        "link_image": "images",
+        "link_image": "salameche",
         "statut": "normal",
         "next_evolution": {
             "name": "reptincelle",
@@ -102,7 +102,7 @@
             "type1": "feu",
             "type2": "terre",
             "KO": false,
-            "link_image": "images",
+            "link_image": "reptincelle",
             "statut": "normal",
             "next_evolution": {
                 "name": "dracaufeu",
@@ -116,7 +116,7 @@
                 "type1": "feu",
                 "type2": null,
                 "KO": false,
-                "link_image": "images",
+                "link_image": "dracaufeu",
                 "statut": "normal",
                 "next_evolution": null
             }
@@ -134,7 +134,7 @@
         "type1": "plante",
         "type2": "terre",
         "KO": false,
-        "link_image": "images",
+        "link_image": "bulbizarre",
         "statut": "normal",
         "next_evolution": {
             "name": "herbizarre",
@@ -148,7 +148,7 @@
             "type1": "plante",
             "type2": "terre",
             "KO": false,
-            "link_image": "images",
+            "link_image": "herbizarre",
             "statut": "normal",
             "next_evolution": {
                 "name": "florizarre",
@@ -162,7 +162,7 @@
                 "type1": "plante",
                 "type2": "terre",
                 "KO": false,
-                "link_image": "images",
+                "link_image": "florizarre",
                 "statut": "normal",
                 "next_evolution": null
             }
@@ -180,7 +180,7 @@
         "type1": "vol",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "lugia",
         "statut": "normal",
         "next_evolution": null
     },
@@ -196,7 +196,7 @@
         "type1": "vol",
         "type2": "glace",
         "KO": false,
-        "link_image": "images",
+        "link_image": "artikodin",
         "statut": "normal",
         "next_evolution": null
     },
@@ -212,7 +212,7 @@
         "type1": "terre",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "triopiqueur",
         "statut": "normal",
         "next_evolution": {
             "name": "triopiqueur",
@@ -226,7 +226,7 @@
             "type1": "terre",
             "type2": null,
             "KO": false,
-            "link_image": "images",
+            "link_image": "triopiqueur",
             "statut": "normal",
             "next_evolution": null
         }
@@ -243,7 +243,7 @@
         "type1": "normal",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "rondoudou",
         "statut": "normal",
         "next_evolution": {
             "name": "grodoudou",
@@ -257,7 +257,7 @@
             "type1": "normal",
             "type2": null,
             "KO": false,
-            "link_image": "images",
+            "link_image": "grodoudou",
             "statut": "normal",
             "next_evolution": null
         }
@@ -274,7 +274,7 @@
         "type1": "poison",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "tadmorv",
         "statut": "normal",
         "next_evolution": {
             "name": "grotadmorv",
@@ -288,7 +288,7 @@
             "type1": "poison",
             "type2": null,
             "KO": false,
-            "link_image": "images",
+            "link_image": "grotadmorv",
             "statut": "normal",
             "next_evolution": null
         }
@@ -305,7 +305,7 @@
         "type1": "terre",
         "type2": null,
         "KO": false,
-        "link_image": "images",
+        "link_image": "ronflex",
         "statut": "normal",
         "next_evolution": null
     },
@@ -321,7 +321,7 @@
         "type1": "vol",
         "type2": "feu",
         "KO": false,
-        "link_image": "images",
+        "link_image": "hoho",
         "statut": "normal",
         "next_evolution": null
     }

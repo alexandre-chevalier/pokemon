@@ -180,7 +180,7 @@ class Menu:
     def display_pokemon(self):
         pokelist = []
         vertical_pos = self.rect4.top + 20
-        with open('pokemon/pokemon.json', 'r') as file:
+        with open('data/pokemon.json', 'r') as file:
             pokelistJson = json.load(file)
             for i, poke in enumerate(pokelistJson):
                 text = f'{i + 1}. {poke["name"]}'
