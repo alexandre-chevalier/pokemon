@@ -4,7 +4,7 @@ import json
 import os
 from pokemon import Pokemon
 from player import Player
-from battle_manager import *
+from battle_manager import BattleManager
 
 # Initialize Pygame
 pygame.init()
@@ -28,13 +28,6 @@ font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
 font = pygame.font.Font(font_path, 36)
 
 file_path = os.path.join(BASE_DIR, "players.json")
-
-if os.path.exists(file_path):
-    with open(file_path, "r") as f:
-        players_data = json.load(f)
-else:
-    print("Erreur: Le fichier 'players.json' est introuvable.")
-    players_data = []  # Ou une valeur par défaut
 
 class SpecialMove:
     def __init__(self, name, damage, accuracy, effect=None):
@@ -64,8 +57,9 @@ class Combat:
         ("Électrik", "Eau"): 2, ("Électrik", "Vol"): 2, ("Électrik", "Électrik"): 0.5, ("Électrik", "Plante"): 0.5, ("Électrik", "Dragon"): 0.5, ("Électrik", "Sol"): 0
     }
 
-    def __init__(self, player):
+    def __init__(self, player, battle_manager=None):
         self.player = player
+        self.battle_manager = battle_manager if battle_manager else BattleManager(file_path)
         pokemon_list = self.load_pokemon_list()
         self.pokemon2 = random.choice(pokemon_list)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -326,31 +320,10 @@ class Combat:
             self.screen.blit(message3, (50, 300))
 
         # Sauvegarder les nouvelles stats du gagnant dans players.json
-        try:
-            with open(file_path, "r") as f:
-                players_data = json.load(f)
+        self.battle_manager.record_winner(winner, looser)
 
-            for player in players_data:
-                if player["pokemon"]["name"] == winner.name:
-                    player["pokemon"]["XP"] = winner.experience
-                    player["pokemon"]["level"] = winner.level
-                    player["pokemon"]["limitXP"] = winner.limitXP
-                    player["pokemon"]["attack"] = winner.attack
-                    player["pokemon"]["defence"] = winner.defence
-                    break
-
-            with open(file_path, "w") as f:
-                json.dump(players_data, f, indent=4)
-
-                print(f"{winner.name} a été mis à jour dans players.json")
-
-        except Exception as e:
-            print(f"Erreur lors de la sauvegarde de {winner.name} : {e}")
-
-        # Ajouter au fichier vainqueurs.json
-        with open(os.path.join(BASE_DIR, "vainqueurs.json"), "a") as f:
-            json.dump({"vainqueur": winner.name}, f)
-            f.write("\n")
+        # Supprimer le Pokémon perdant de l'équipe du joueur
+        self.battle_manager.remove_loser_pokemon(looser)
 
     def display_end_message(self, winner, looser):
         self.screen.fill(BLACK)
