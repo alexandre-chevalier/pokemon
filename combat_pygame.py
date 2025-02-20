@@ -46,18 +46,21 @@ class Combat:
 
     def __init__(self,player):
         self.player = player
-        self.pokemon1 = self.load_player_pokemon()
         pokemon_list = self.load_pokemon_list()
         self.pokemon2 = (random.choice(pokemon_list)) 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Pokemon Battle")
         self.attack_button_rect = None
-
+        self.player_name, self.pokemon1= self.load_player_pokemon()
+        
+        
+        
         # Load
         # Pokémon images
         self.pokemon1_image = self.load_and_scale_image(self.pokemon1.name, (150, 150))
         self.pokemon2_image = self.load_and_scale_image(self.pokemon2.name, (150, 150))
-    
+            
+
     def load_player_pokemon(self):
         """Charge le Pokémon actif du joueur depuis 'players.json'"""
         try:
@@ -74,16 +77,17 @@ class Combat:
                 # Liste des attributs attendus pour créer un Pokémon
                 expected_keys = {"name", "lifePoint", "level", "XP", "giveXP", "limitXP", "attack", "defence", "type1", "type2", "next_evolution"}
                 filtered_data = {k: v for k, v in pokemon_data.items() if k in expected_keys}
+                print(f"Nom du joueur : {player_name}")
 
-                return Pokemon(**filtered_data)
+                return player_name, Pokemon(**filtered_data)
 
         except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
             print(f"Erreur lors du chargement du Pokémon du joueur: {e}")
         return None, None
 
                 
-        
-
+  
+    
     
     def load_pokemon_list(self):
         try:
@@ -182,21 +186,86 @@ class Combat:
         pygame.display.flip()
         pygame.time.delay(3000) 
         
-    def record_in_pokedex(self, pokemon):
+    def get_pokedex_list(self):
         try:
-         if not hasattr(self, "pokedex"):
-             self.pokedex = []
-             if os.path.exists("pokedex.json"):
-                 with open("pokedex.json", "r") as f:
-                     self.pokedex = json.load(f)
-         
-         if pokemon.name not in self.pokedex:
-             self.pokedex.append(pokemon.name)
-             with open("pokedex.json", "w") as f:
-                 json.dump(self.pokedex, f, indent=4)
-             print(f"{pokemon.name} ajouté au Pokédex !")
+            with open('poke.json', 'r', encoding='utf-8') as file:
+                # Lire le contenu du fichier
+                contenu = file.read().strip()
+                # Si le fichier est vide ou ne contient que des espaces, réinitialiser
+                if not contenu:
+                    raise ValueError("Le fichier est vide")
+                self.pokedex_list = json.loads(contenu)
+        except (FileNotFoundError, ValueError, json.JSONDecodeError):
+            print("Le fichier poke.json est vide ou invalide. Réinitialisation...")
+            self.pokedex_list = []
+            # Réinitialisation du fichier poke.json avec une liste vide
+            with open('poke.json', 'w', encoding='utf-8') as file:
+                json.dump(self.pokedex_list, file, indent=4)
+
+        return self.pokedex_list
+
+    
+
+    
+    def record_pokedex(self, pokemon):
+    # Vérifier que la liste des Pokémon a bien été chargée
+        self.get_pokedex_list()
+
+        if not self.player:  # Vérifier si le joueur est défini
+            return
+
+        player_name = self.player.name  # Convertir l'objet Player en chaîne
+        player_found = False
+
+        # Parcourir les entrées du Pokédex
+        for entry in self.pokedex_list:
+            if player_name in entry:  # Chercher l'entrée du joueur par nom
+                pokemon_dict = entry[player_name]
+
+                # Si le Pokémon est déjà présent, mettre à jour ses données
+                if pokemon.name in pokemon_dict:
+                    pokemon_dict[pokemon.name]["count"] += 1
+                else:
+                    # Ajouter toutes les informations du Pokémon
+                    pokemon_dict[pokemon.name] = {
+                        "count": 1,
+                        "lifePoint": pokemon.lifePoint,
+                        "level": pokemon.level,
+                        "attack": pokemon.attack,
+                        "defence": pokemon.defence,
+                        "type1": pokemon.type1,
+                        "type2": pokemon.type2,
+                    }
+
+                # Mettre à jour l'entrée du joueur avec les nouvelles données du Pokémon
+                entry[player_name] = pokemon_dict
+                player_found = True
+                break
+
+        # Si l'entrée du joueur n'a pas été trouvée, créer une nouvelle entrée
+        if not player_found:
+            self.pokedex_list.append({
+                player_name: {
+                    pokemon.name: {
+                        "count": 1,
+                        "lifePoint": pokemon.lifePoint,
+                        "level": pokemon.level,
+                        "attack": pokemon.attack,
+                        "defence": pokemon.defence,
+                        "type1": pokemon.type1,
+                        "type2": pokemon.type2,
+                    }
+                }
+            })
+
+        # Sauvegarder les données du Pokédex dans le fichier poke.json
+        try:
+            with open('poke.json', 'w', encoding='utf-8') as file:
+                json.dump(self.pokedex_list, file, indent=4, ensure_ascii=False)
+            print("Données enregistrées dans poke.json")
         except Exception as e:
-         print(f"Erreur lors de l'ajout au Pokédex : {e}")
+            print(f"Erreur lors de l'enregistrement dans poke.json: {e}")
+
     
     def record_winner(self, winner, looser):
         
@@ -211,7 +280,9 @@ class Combat:
             winner.limitXP *= 3  
             winner.attack += 2  
             winner.defence += 2
-        print(f"{winner.name} monte au niveau {winner.level} !")
+            #print(f"{winner.name} monte au niveau {winner.level} !")
+            message3 = font.render(f"{winner.name} monte au niveau {winner.level} !", True, YELLOW)
+            self.screen.blit(message3, (50, 300))
 
     # Sauvegarder les nouvelles stats du gagnant dans players.json
         try:
@@ -244,18 +315,19 @@ class Combat:
         self.screen.fill(BLACK)
         message1 = font.render(f"{looser.name} is K.O. !", True, RED)
         message2 = font.render(f"{winner.name} gagne {looser.giveXp} XP ! XP total: {winner.experience}/{winner.limitXP}", True, WHITE)
-        message3 = font.render(f"{winner.name} monte au niveau {winner.level} !", True, YELLOW)
+        
         message4 = font.render(f"{winner.name} a été mis à jour dans players.json", True, WHITE)
         message5 = font.render(f"The winner is {winner.name}!", True, YELLOW)
         
         self.screen.blit(message1, (50, 200))
         self.screen.blit(message2, (50, 250))
-        self.screen.blit(message3, (50, 300))
         self.screen.blit(message4, (50, 350))
         self.screen.blit(message5, (50, 400))
         
         pygame.display.flip()
         pygame.time.delay(5000)
+        
+        
     def start_battle(self):
         running = True
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
@@ -287,7 +359,7 @@ class Combat:
                 winner = self.pokemon1 if not self.pokemon1.KO else self.pokemon2
                 looser = self.pokemon1 if self.pokemon1.KO else self.pokemon2
                 self.display_winner(winner) # Affichage du gagnant
-                self.record_in_pokedex(self.pokemon2)
+                self.record_pokedex(self.pokemon2)
                 self.record_winner(winner,looser)
                 self.display_end_message(winner, looser)
 
