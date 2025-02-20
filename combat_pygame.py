@@ -24,11 +24,26 @@ YELLOW = (255, 223, 0)
 BASE_DIR = r"C:\Users\ndiay\Desktop\lptf\projets\pokemon\develop"
 IMAGE_DIR = os.path.join(BASE_DIR, "images")
 SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+background_image = pygame.image.load(os.path.join(IMAGE_DIR, 'arene_ring.png')) 
 
 
 font_path = os.path.join(BASE_DIR,"Audiowide-Regular.ttf")
 font = pygame.font.Font(font_path, 36)
 
+class SpecialMove:
+    def __init__(self, name, damage, accuracy, effect=None):
+        self.name = name
+        self.damage = damage
+        self.accuracy = accuracy
+        self.effect = effect
+
+    def apply_effect(self, target):
+        if self.effect and random.random() < self.effect.get('chance', 1.0):
+            status = self.effect.get('status')
+            duration = self.effect.get('duration', 3)  # Default duration of 3 turns
+            if status:
+                target.add_status_effect(status, duration)
+                print(f"{target.name} is affected by {status} for {duration} turns!")
 
 class Combat:
     TYPE_EFFICACY = {
@@ -43,7 +58,7 @@ class Combat:
     ("Électrik", "Eau"): 2, ("Électrik", "Vol"): 2, ("Électrik", "Électrik"): 0.5, ("Électrik", "Plante"): 0.5, ("Électrik", "Dragon"): 0.5, ("Électrik", "Sol"): 0
 }
 
-
+    
     def __init__(self,player):
         self.player = player
         pokemon_list = self.load_pokemon_list()
@@ -52,15 +67,35 @@ class Combat:
         pygame.display.set_caption("Pokemon Battle")
         self.attack_button_rect = None
         self.player_name, self.pokemon1= self.load_player_pokemon()
-        
-        
-        
-        # Load
-        # Pokémon images
         self.pokemon1_image = self.load_and_scale_image(self.pokemon1.name, (150, 150))
         self.pokemon2_image = self.load_and_scale_image(self.pokemon2.name, (150, 150))
-            
-
+        # Define special moves for demonstration
+        self.special_moves = [
+         SpecialMove("Fire Blast", 50, 0.85, {"status": "burn", "chance": 0.3, "duration": 5}),
+         SpecialMove("Thunderbolt", 45, 0.9, {"status": "paralysis", "chance": 0.2, "duration": 4}),
+         SpecialMove("Ice Beam", 40, 0.95, {"status": "freeze", "chance": 0.1, "duration": 3}),
+         ]
+        
+    def apply_status_effects(self, pokemon):
+        pokemon.decrement_status_effects()
+        for effect, duration in pokemon.status_effects.items():
+            if effect == "burn":
+                pokemon.lifePoint -= 5
+                print(f"{pokemon.name} is hurt by burn!")
+            elif effect == "paralysis" and random.random() < 0.5:
+                print(f"{pokemon.name} is paralyzed and can't move!")
+                return True  # Pokémon can't move this turn
+            elif effect == "freeze" and random.random() < 0.2:
+                print(f"{pokemon.name} is frozen solid!")
+                return True  # Pokémon can't move this turn
+        return False
+    
+    def display_status_effects(self, pokemon, x, y):
+        if pokemon.status_effects:
+            effects_text = ", ".join(pokemon.status_effects.keys())
+            status_text = font.render(f"Status: {effects_text}", True, YELLOW)
+            self.screen.blit(status_text, (x, y))
+    
     def load_player_pokemon(self):
         """Charge le Pokémon actif du joueur depuis 'players.json'"""
         try:
@@ -121,20 +156,22 @@ class Combat:
             True, WHITE
         )
         self.screen.blit(pokemon1_info, (50, 50))
+        self.display_status_effects(self.pokemon1, 50, 80)
 
         # Display Pokemon 2 characteristics
         pokemon2_info = font.render(
             f"{self.pokemon2.name} - HP: {self.pokemon2.lifePoint}, Attack: {self.pokemon2.attack}, Defense: {self.pokemon2.defence}, Type: {self.pokemon2.type1}",
             True, WHITE
         )
-        self.screen.blit(pokemon2_info, (50, 100))
+        self.screen.blit(pokemon2_info, (50, 150))
+        self.display_status_effects(self.pokemon2, 50, 180)
 
         # Display Pokémon images
         if self.pokemon1_image:
             self.screen.blit(self.pokemon1_image, (50, 200))
         if self.pokemon2_image:
             self.screen.blit(self.pokemon2_image, (SCREEN_WIDTH - 200, 200))
-
+            
     def calculate_multiplier(self, attacker, target):
         multiplier1 = self.TYPE_EFFICACY.get((attacker.type1, target.type1), 1)
         multiplier2 = self.TYPE_EFFICACY.get((attacker.type1, target.type2), 1) if target.type2 else 1
@@ -150,20 +187,28 @@ class Combat:
             
            print(f"Error loading sound: {e}")
     
-    def attack(self, attacker, target):
-        self.play_attack_sound() 
-        multiplier = self.calculate_multiplier(attacker, target)
-        damage = max(0, (attacker.attack * multiplier) - target.defence)
-        target.lifePoint -= damage
-        print(f"{attacker.name} attacks {target.name} with a multiplier of {multiplier}. Damage dealt: {damage}")
-         
-        # Display damage on screen
-        damage_text = font.render(f"{attacker.name} deals {damage} damage to {target.name}!", True, RED)
-        self.screen.blit(damage_text, (50, 300))
+    def attack(self, attacker, target, move=None):
+        self.play_attack_sound()
+        if not move:
+            move = random.choice(self.special_moves)
 
-        if target.lifePoint <= 0:
-            target.KO = True
-            print(f"{target.name} is K.O. !")
+        if random.random() < move.accuracy:
+            multiplier = self.calculate_multiplier(attacker, target)
+            damage = max(0, (attacker.attack * multiplier * move.damage / 100) - target.defence)
+            target.lifePoint -= damage
+            print(f"{attacker.name} uses {move.name} on {target.name} with a multiplier of {multiplier}. Damage dealt: {damage}")
+            move.apply_effect(target)
+
+            # Display damage on screen
+            damage_text = font.render(f"{attacker.name} deals {damage} damage to {target.name}!", True, RED)
+            self.screen.blit(damage_text, (50, 300))
+
+            if target.lifePoint <= 0:
+                target.KO = True
+                print(f"{target.name} is K.O. !")
+        else:
+            print(f"{attacker.name}'s attack missed!")
+
 
     def draw_attack_button(self):
         button_width = 200
@@ -333,15 +378,19 @@ class Combat:
         turn = 1  # 1 for Pokemon1's turn, 2 for Pokemon2's turn
 
         while running:
-            self.screen.fill(BLACK)
+            self.screen.blit(background_image, (0, 0))
             self.display_characteristics()
             self.draw_attack_button()
 
             # Display whose turn it is
             if turn == 1:
                 self.display_turn(self.pokemon1.name)
+                if self.apply_status_effects(self.pokemon1):
+                    turn = 2  # Skip turn if paralyzed or frozen
             else:
                 self.display_turn(self.pokemon2.name)
+                if self.apply_status_effects(self.pokemon2):
+                    turn = 1  # Skip turn if paralyzed or frozen
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -358,13 +407,12 @@ class Combat:
             if self.pokemon1.KO or self.pokemon2.KO:
                 winner = self.pokemon1 if not self.pokemon1.KO else self.pokemon2
                 looser = self.pokemon1 if self.pokemon1.KO else self.pokemon2
-                self.display_winner(winner) # Affichage du gagnant
+                self.display_winner(winner)
                 self.record_pokedex(self.pokemon2)
-                self.record_winner(winner,looser)
+                self.record_winner(winner, looser)
                 self.display_end_message(winner, looser)
 
                 print(f"The winner is {winner.name}!")
-                
                 running = False
 
             pygame.display.flip()
