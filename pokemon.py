@@ -1,6 +1,31 @@
 import pygame
-import os
 import json
+import os
+from input_add_pokemon import InputBox
+
+# Initialisation de Pygame
+pygame.init()
+
+# Dimensions de l'écran
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 600
+
+# Couleurs
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 223, 0)
+
+# Chemins des fichiers
+BASE_DIR = r"C:/Users/Windows/Desktop/projets/1a/pokemon"
+IMAGE_DIR = os.path.join(BASE_DIR, "images")
+SOUND_DIR = os.path.join(BASE_DIR, "sounds")
+font_path = os.path.join(BASE_DIR, "Audiowide-Regular.ttf")
+font = pygame.font.Font(font_path, 36)
+
+# Création de la fenêtre
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Ajouter un Pokémon")
 
 class Pokemon:
     def __init__(self, name, lifePoint, level, XP, giveXP, limitXP, attack, defence, type1, type2, next_evolution):
@@ -25,15 +50,12 @@ class Pokemon:
         self.status_effects[effect] = duration
 
     def decrement_status_effects(self):
-        # Decrease the duration of each status effect
         effects_to_remove = []
         for effect, duration in self.status_effects.items():
             if duration > 1:
                 self.status_effects[effect] = duration - 1
             else:
                 effects_to_remove.append(effect)
-
-        # Remove effects with duration 0
         for effect in effects_to_remove:
             del self.status_effects[effect]
 
@@ -89,29 +111,79 @@ class Pokemon:
             print('This Pokémon is already in your Pokédex.')
 
     def add_pokemon(self):
-        name = input("Nom du Pokémon : ")
-        pv = int(input("Points de vie : "))
-        type1 = input("Type principal : ")
-        type2 = input("Type secondaire (laisser vide si aucun) : ") or None
-        attack = int(input("Attaque : "))
-        defense = int(input("Défense : "))
-        giveXP = int(input("Rapporte combien de points d'XP ? : "))
+        # Création des champs de saisie
+        input_boxes = [
+            InputBox(800, 50, 200, 32),
+            InputBox(800, 100, 200, 32),
+            InputBox(800, 150, 200, 32),
+            InputBox(800, 200, 200, 32),
+            InputBox(800, 250, 200, 32),
+            InputBox(800, 300, 200, 32),
+            InputBox(800, 350, 200, 32)
+        ]
 
-        new_pokemon = Pokemon(
-            name=name,
-            lifePoint=pv,
-            level=1,
-            XP=0,
-            giveXP=giveXP,
-            limitXP=60,
-            attack=attack,
-            defence=defense,
-            type1=type1,
-            type2=type2,
-            next_evolution=None
-        )
-        self.add_to_list(new_pokemon)
-        print(f"{name} a été ajouté !")
+        # Étiquettes pour les champs de saisie
+        labels = [
+            "Nom du Pokémon :",
+            "Points de vie :",
+            "Type principal :",
+            "Type secondaire :",
+            "Attaque :",
+            "Défense :",
+            "Points d'XP :"
+        ]
+
+        # Bouton pour ajouter un Pokémon
+        add_button = pygame.Rect(800, 400, 200, 32)
+        add_button_text = font.render("Ajouter", True, BLACK)
+
+        # Boucle principale
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                for box in input_boxes:
+                    box.handle_event(event)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if add_button.collidepoint(event.pos):
+                        name = input_boxes[0].text
+                        pv = int(input_boxes[1].text)
+                        type1 = input_boxes[2].text
+                        type2 = input_boxes[3].text if input_boxes[3].text else None
+                        attack = int(input_boxes[4].text)
+                        defense = int(input_boxes[5].text)
+                        giveXP = int(input_boxes[6].text)
+                        new_pokemon = Pokemon(
+                            name=name,
+                            lifePoint=pv,
+                            level=1,
+                            XP=0,
+                            giveXP=giveXP,
+                            limitXP=60,
+                            attack=attack,
+                            defence=defense,
+                            type1=type1,
+                            type2=type2,
+                            next_evolution=None
+                        )
+                        self.add_to_list(new_pokemon)
+                        print(f"{name} a été ajouté !")
+
+            for box in input_boxes:
+                box.update()
+
+            screen.fill(WHITE)  # Remplit l'écran avec la couleur blanche
+            for i, box in enumerate(input_boxes):
+                box.draw(screen)
+                label_surface = font.render(labels[i], True, BLACK)  # Couleur du texte en noir
+                screen.blit(label_surface, (250, box.rect.y - 5))
+            pygame.draw.rect(screen, YELLOW, add_button)
+            screen.blit(add_button_text, (add_button.x + 5, add_button.y + 5))
+
+            pygame.display.flip()
+
+        pygame.quit()
 
     def to_dict(self):
         return {
@@ -162,40 +234,5 @@ class Pokemon:
         """
 
 # Exemple d'utilisation
-raichu = Pokemon("raichu", 250, 1, 0, 100, 120, 30, 25, "electric", None, None)
-pikachu = Pokemon("pikachu", 100, 1, 0, 10, 20, 10, 8, "electric", None, raichu)
-tortank = Pokemon("tortank", 250, 1, 0, 100, 120, 30, 25, "eau", None, None)
-carabaffe = Pokemon("carabaffe", 175, 1, 0, 60, 120, 30, 25, "eau", None, tortank)
-carapuce = Pokemon("carapuce", 120, 1, 0, 60, 120, 30, 25, "eau", None, carabaffe)
-dracaufeu = Pokemon("dracaufeu", 250, 1, 0, 100, 120, 30, 25, "feu", None, None)
-reptincelle = Pokemon("reptincelle", 175, 1, 0, 60, 120, 30, 25, "feu", "terre", dracaufeu)
-salameche = Pokemon("salameche", 100, 1, 0, 60, 120, 30, 25, "feu", "terre", reptincelle)
-florizarre = Pokemon("florizarre", 250, 1, 0, 100, 120, 30, 25, "plante", "terre", None)
-herbizarre = Pokemon("herbizarre", 175, 1, 0, 60, 120, 30, 25, "plante", "terre", florizarre)
-bulbizarre = Pokemon("bulbizarre", 100, 1, 0, 60, 120, 20, 25, "plante", "terre", herbizarre)
-lugia = Pokemon("lugia", 175, 1, 0, 100, 120, 30, 20, "vol", None, None)
-artikodin = Pokemon("artikodin", 175, 1, 0, 60, 120, 30, 25, "vol", "glace", None)
-triopiqueur = Pokemon("triopiqueur", 250, 1, 0, 60, 120, 30, 25, "terre", None, None)
-taupiqueur = Pokemon("taupiqueur", 100, 1, 0, 60, 120, 30, 25, "terre", None, triopiqueur)
-grodoudou = Pokemon("grodoudou", 250, 1, 0, 60, 120, 30, 25, "normal", None, None)
-rondoudou = Pokemon("rondoudou", 60, 1, 0, 60, 120, 50, 25, "normal", None, grodoudou)
-grotadmorv = Pokemon("grotadmorv", 175, 1, 0, 100, 120, 30, 20, "poison", None, None)
-tadmorv = Pokemon("tadmorv", 120, 1, 0, 100, 120, 30, 20, "poison", None, grotadmorv)
-ronflex = Pokemon("ronflex", 250, 1, 0, 60, 120, 30, 25, "terre", None, None)
-hoho = Pokemon("hoho", 200, 1, 0, 100, 120, 30, 20, "vol", "feu", None)
-
-pikachu.add_to_list(pikachu)
-pikachu.add_to_list(carapuce)
-pikachu.add_to_list(salameche)
-pikachu.add_to_list(bulbizarre)
-pikachu.add_to_list(lugia)
-pikachu.add_to_list(artikodin)
-pikachu.add_to_list(taupiqueur)
-pikachu.add_to_list(rondoudou)
-pikachu.add_to_list(tadmorv)
-pikachu.add_to_list(ronflex)
-pikachu.add_to_list(hoho)
-
+pikachu = Pokemon("pikachu", 100, 1, 0, 10, 20, 10, 8, "electric", None, None)
 pikachu.add_pokemon()
-listing = pikachu.get_pokemon_list()
-print(listing)
