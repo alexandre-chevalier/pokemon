@@ -305,4 +305,3 @@ class Menu:
 
     def display(self):
         self.screen_transition()
-
