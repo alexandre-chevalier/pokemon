@@ -4,7 +4,6 @@ import pygame
 import sys
 import random
 from player import *
-from battle_manager import BattleManager  # Assurez-vous que ce fichier est accessible
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGE_DIR = os.path.join(BASE_DIR, "data/images")
@@ -12,6 +11,7 @@ SOUND_DIR = os.path.join(BASE_DIR, "data/sounds")
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 Pokemon_list = os.path.join(BASE_DIR, "data/pokemon.json")
 player_list = os.path.join(BASE_DIR, "data/players.json")
+POKEDEX_FILE = os.path.join(BASE_DIR, "data/poke.json")
 
 # Table des types (simplifiée pour l'exemple)
 TYPE_MULTIPLIERS = {
@@ -28,11 +28,11 @@ class Game:
     def __init__(self, width, height, background_image_path, player):
         pygame.init()
         pygame.mixer.init()
-        background_music_path = os.path.join(SOUND_DIR, "SuicuneBattle.wav")
+        background_music_path = os.path.join(SOUND_DIR, "SuicuneBattle.wav")  # Remplace avec le bon fichier
         if os.path.exists(background_music_path):
             pygame.mixer.music.load(background_music_path)
-            pygame.mixer.music.set_volume(0.5)
-            pygame.mixer.music.play(-1)
+            pygame.mixer.music.set_volume(0.5)  # Volume entre 0.0 et 1.0
+            pygame.mixer.music.play(-1)  # -1 signifie que la musique tourne en boucle
         else:
             print("Fichier audio introuvable ! Vérifiez le chemin.")
 
@@ -49,6 +49,7 @@ class Game:
         self.running = True
 
         self.opponent_pokemon = self.choose_random_pokemon()
+        self.pokemon_met = self.opponent_pokemon["name"]  # Set the encountered Pokémon
 
         self.attack_button = pygame.Rect(self.width // 2 - 50, self.height - 100, 100, 50)
         self.attacking = False
@@ -59,9 +60,6 @@ class Game:
         self.opponent_pokemon["current_hp"] = self.opponent_pokemon["lifePoint"]
 
         self.load_pokemon_images()
-
-        # Instancier BattleManager
-        self.battle_manager = BattleManager(player_list)
 
     def choose_random_pokemon(self):
         try:
@@ -116,12 +114,26 @@ class Game:
         self.screen.blit(player_hp_text, (50, self.height - 220))
         self.screen.blit(opponent_hp_text, (self.width - 200, 30))
 
+    def capture_pokemon(self):
+        print(f"Vous avez capturé {self.opponent_pokemon['name']} !")
+
+        # Ajouter le Pokémon capturé à la liste du joueur
+        if "captured_pokemon" not in self.player.__dict__:
+            self.player.captured_pokemon = []
+
+        self.player.captured_pokemon.append(self.opponent_pokemon)
+
+        # Sauvegarde les données du joueur
+        self.player.save_to_file()
+
+        # Record the encountered Pokémon in the Pokedex
+        self.record_pokedex(self.opponent_pokemon)
+
     def check_game_over(self):
         if self.player_pokemon["KO"]:
-            self.battle_manager.remove_loser_pokemon(self.player)
             self.display_end_screen("GAME OVER", (255, 0, 0))  # Rouge si on perd
         elif self.opponent_pokemon["KO"]:
-            self.battle_manager.record_winner(self.player, self.opponent_pokemon)
+            self.capture_pokemon()  # Capture du Pokémon si on gagne
             self.display_end_screen("VICTOIRE !", (0, 255, 0))  # Vert si on gagne
 
     def display_end_screen(self, message, color):
@@ -160,6 +172,53 @@ class Game:
         pygame.mixer.music.stop()
         pygame.quit()
         sys.exit()
+
+    # Get pokedex from poke.json
+    def get_pokedex_list(self):
+        try:
+            with open(POKEDEX_FILE, 'r', encoding='utf-8') as fichier:
+                contenu = fichier.read().strip()
+                if not contenu:
+                    raise ValueError("Le fichier est vide")
+                self.pokedex_list = json.loads(contenu)
+        except (FileNotFoundError, ValueError, json.JSONDecodeError):
+            print("Le fichier poke.json est vide ou invalide. Réinitialisation...")
+            self.pokedex_list = []
+            with open(POKEDEX_FILE, 'w', encoding='utf-8') as fichier:
+                json.dump(self.pokedex_list, fichier, indent=4)
+
+        return self.pokedex_list
+
+    def record_pokedex(self, pokemon):
+        self.get_pokedex_list()
+
+        if not self.player.name:
+            return
+
+        player_found = False
+
+        for entry in self.pokedex_list:
+            if self.player.name in entry:
+                pokemon_dict = entry[self.player.name]
+
+                if isinstance(pokemon_dict, list):
+                    pokemon_dict = {poke: 1 for poke in pokemon_dict}
+
+                if self.pokemon_met in pokemon_dict:
+                    pokemon_dict[self.pokemon_met] += 1
+                else:
+                    pokemon_dict[self.pokemon_met] = 1
+
+                entry[self.player.name] = pokemon_dict
+                player_found = True
+                break
+
+        if not player_found:
+            self.pokedex_list.append({self.player.name: {self.pokemon_met: 1}})
+
+        # Sauvegarde le fichier JSON
+        with open(POKEDEX_FILE, 'w') as fichier:
+            json.dump(self.pokedex_list, fichier, indent=4)
 
 if __name__ == "__main__":
     player_name = Player.ask_for_name()
