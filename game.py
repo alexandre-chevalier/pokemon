@@ -219,6 +219,9 @@ class Combat:
             json.dump({"vainqueur": winner.name}, f)
             f.write("\n")
 
+        # Enregistrer le Pokémon rencontré dans le Pokédex
+        self.record_pokedex(self.pokemon2)
+
     def draw_health_bar(self, current_hp, max_hp):
         bar_width = 100
         fill = (current_hp / max_hp) * bar_width
