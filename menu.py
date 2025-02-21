@@ -1,307 +1,102 @@
 import pygame
-import sys
 import os
-import json
-import random
-from player import *
-from manage_pokedex import *
-from combat_pygame import *
+import sys
+from player import Player
 
-# Pygame start
+# Initialisation de pygame
 pygame.init()
-pygame.font.init()
+pygame.mixer.init()  # Initialisation du module audio
 
+# Définition des constantes
+WIDTH, HEIGHT = 1200, 600
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# ways to files
 IMAGE_DIR = os.path.join(BASE_DIR, "data/images")
 SOUND_DIR = os.path.join(BASE_DIR, "data/sounds")
-ASSETS_DIR = os.path.join(BASE_DIR, "assets")
+MENU_BACKGROUND_IMAGE = os.path.join(IMAGE_DIR, "imput_name.jpg")
+MENU_MUSIC = os.path.join(SOUND_DIR, "LugiaSong.wav")  # Ajout du chemin de la musique
 
-# Screen size
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 600
-
-# Colors used
-BLACK = (0, 0, 0)
-YELLOW = (255, 223, 0)
+# Couleurs
 WHITE = (255, 255, 255)
-DARK_BLUE = (0, 0, 128)
-RED = (250, 0, 0)
+BLACK = (0, 0, 0)
+RED = (200, 0, 0)
+GREEN = (0, 200, 0)
 
-def load_music(file_path):
-    try:
-        pygame.mixer.music.load(file_path)
-        return file_path
-    except FileNotFoundError as e:
-        print(f"Music file not found: {e}")
-        return None
+# Création de la fenêtre
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Pokemon Game Menu")
 
-def load_image(file_path, size=None):
-    try:
-        image = pygame.image.load(file_path)
-        if size:
-            image = pygame.transform.scale(image, size)
-        return image
-    except FileNotFoundError as e:
-        print(f"Image file not found: {e}")
-        return None
+# Chargement de la musique du menu
+if os.path.exists(MENU_MUSIC):
+    pygame.mixer.music.load(MENU_MUSIC)
+    pygame.mixer.music.set_volume(0.9)
+    pygame.mixer.music.play(-1)  # Lecture en boucle
+else:
+    print("Fichier audio du menu introuvable !")
 
-MUSIC_SCREEN = {
-    "main_menu": load_music(os.path.join(SOUND_DIR, "LugiaSong.wav")),
-    "battle": [
-        load_music(os.path.join(SOUND_DIR, "FrontierBrain.wav")),
-        load_music(os.path.join(SOUND_DIR, "TheManwiththeMachineGun.wav"))
-    ],
-    "score": load_music(os.path.join(SOUND_DIR, "VictoryFanfare.wav"))
-}
+# Chargement de l'image de fond du menu
+if os.path.exists(MENU_BACKGROUND_IMAGE):
+    background = pygame.image.load(MENU_BACKGROUND_IMAGE)
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+else:
+    print("Image d'arrière-plan du menu introuvable !")
+    background = None
 
-SCREEN_BACKGROUND = {
-    "main_menu": load_image(os.path.join(IMAGE_DIR, "background.png"), (SCREEN_WIDTH, SCREEN_HEIGHT)),
-    "battle": [
-        load_image(os.path.join(IMAGE_DIR, "background2.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-    ],
-    "score": load_image(os.path.join(IMAGE_DIR, "tokyo.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-}
+# Police
+font = pygame.font.Font(None, 72)
+button_font = pygame.font.Font(None, 50)
 
-BUTTON_WIDTH = 60
-BUTTON_HEIGHT = 60
-BUTTON_MARGIN = 10
-keyboard_rows = 3
-keyboard_cols = 9
+def draw_button(text, x, y, color):
+    button_rect = pygame.Rect(x, y, 250, 60)
+    pygame.draw.rect(screen, color, button_rect)
+    text_surface = button_font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect(center=button_rect.center)
+    screen.blit(text_surface, text_rect)
+    return button_rect
 
-letter = "abcdefghijklmnopqrstuvwxyz"
-
-try:
-    font_path = pygame.font.Font(os.path.join("Ubuntu-Regular.ttf"), 36)
-except FileNotFoundError:
-    print("La police n'a pas été trouvée. Utilisation de la police par défaut.")
-    font_path = pygame.font.Font(None, 36)
-
-class Menu:
-    def __init__(self):
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.font = font_path
-        self.caption = pygame.display.set_caption("Pokemon")
-        self.rect1 = pygame.Rect(400, 300, 400, 50)
-        self.rect2 = pygame.Rect(400, 400, 400, 50)
-        self.rect3 = pygame.Rect(400, 500, 400, 50)
-        self.rect4 = pygame.Rect(100, 100, 1000, 400)
-        self.rect5 = pygame.Rect(500, 0, 200, 50)
-        self.rect6 = pygame.Rect(200, 25, 800, 250)
-        self.rect7 = pygame.Rect(500, 500, 100, 100)
-        self.rect8 = pygame.Rect(150, 400, 200, 50)
-        self.color = (32, 78, 246)
-        self.running = True
-        self.state = "main menu"
-        self.background = SCREEN_BACKGROUND
-        self.clock = pygame.time.Clock()
-        self.text = [
-            "New game",
-            "pokedex",
-            "Exit",
-            "main menu",
-            "enter your name : ",
-            "choose your pokemon : ",
-            "Add Pokemon "
-        ]
-        self.buttons = self.create_keyboard()
-        self.sound = MUSIC_SCREEN
-        self.logo = load_image(os.path.join(IMAGE_DIR, "logo.png"), (800, 250))
-        self.username = ""
-        self.pokemon = 0
-        self.player = Player(self.username)
-        self.pokedex = Pokedex("alex")
-        """self.combat = Combat(self.username)
-        """
-
-    def create_keyboard(self):
-        buttons = []
-        total_keyboard_width = (keyboard_cols * BUTTON_WIDTH) + ((keyboard_cols - 1) * BUTTON_MARGIN)
-        start_x = (SCREEN_WIDTH - total_keyboard_width) // 2
-
-        for row in range(keyboard_rows):
-            for col in range(keyboard_cols):
-                x = start_x + col * (BUTTON_WIDTH + BUTTON_MARGIN)
-                y = 400 + row * (BUTTON_HEIGHT + BUTTON_MARGIN)
-                letter_index = row * keyboard_cols + col
-                if letter_index < len(letter):
-                    char = letter[letter_index]
-                    button_rect = pygame.Rect(x, y, BUTTON_WIDTH, BUTTON_HEIGHT)
-                    buttons.append((char, button_rect))
-        return buttons
-
-    def draw_keyboard(self):
-        if self.state !=  "player":
-            return
-        for char, button in self.buttons:
-            pygame.draw.rect(self.screen, self.color, button)
-            text = self.font.render(char, True, BLACK)
-            self.screen.blit(text, text.get_rect(center=button.center))
-
-    def screen_main_menu(self):
-        pygame.draw.rect(self.screen, self.color, self.rect1, 5)
-        pygame.draw.rect(self.screen, self.color, self.rect2, 5)
-        pygame.draw.rect(self.screen, self.color, self.rect3, 5)
-        pygame.draw.rect(self.screen, self.color, self.rect6, 1)
-        pygame.draw.rect(self.screen,self.color, self.rect8, 5)
-
-        text1 = self.font.render(self.text[0], True, (0, 0, 0))
-        text2 = self.font.render(self.text[1], True, (0, 0, 0))
-        text3 = self.font.render(self.text[2], True, (0, 0, 0))
-        text4 = self.font.render(self.text[6], True, (0, 0, 0))
-
-        self.screen.blit(text1, text1.get_rect(center=self.rect1.center))
-        self.screen.blit(text2, text2.get_rect(center=self.rect2.center))
-        self.screen.blit(text3, text3.get_rect(center=self.rect3.center))
-        self.screen.blit(text4, text4.get_rect(center=self.rect8.center))
-        self.screen.blit(self.logo, self.rect6)
-
-    def screen_enter_player(self):
-        vertical_pos = self.rect4.top + 20
-
-        pygame.draw.rect(self.screen, self.color, self.rect5)
-        pygame.draw.rect(self.screen, self.color, self.rect2)
-        pygame.draw.rect(self.screen, self.color, self.rect1)
-
-        text1 = self.font.render(self.text[3], True, (0, 0, 0))
-        text2 = self.font.render(self.text[4], True, (0, 0, 0))
-        text3 = self.font.render(self.username, True, (0, 0, 0))
-
-        self.screen.blit(text1, text1.get_rect(center=self.rect5.center))
-        self.screen.blit(text2, text2.get_rect(midtop=(self.rect4.centerx, vertical_pos)))
-        self.screen.blit(text3, text3.get_rect(center=self.rect1.center))
-
-        self.draw_keyboard()
-        self.player.player_exists()
-
-    def screen_pokemon(self):
-        pokelist = self.display_pokemon()
-        pygame.draw.rect(self.screen, self.color, self.rect5)
-
-        text1 = self.font.render(self.text[5], True, (0, 0, 0))
-        for text, rect in pokelist:
-            pygame.draw.rect(self.screen, YELLOW, rect, border_radius=5)
-            text_surface = self.font.render(text, True, BLACK)
-            self.screen.blit(text_surface, text_surface.get_rect(center=rect.center))
-        self.screen.blit(text1, text1.get_rect(center=self.rect5.center))
-        self.state = "battle"
-
-    def display_pokemon(self):
-        pokelist = []
-        vertical_pos = self.rect4.top + 20
-        with open('data/pokemon.json', 'r') as file:
-            pokelistJson = json.load(file)
-            for i, poke in enumerate(pokelistJson):
-                text = f'{i + 1}. {poke["name"]}'
-                rect = pygame.Rect(self.rect4.left + 20, vertical_pos, self.rect4.width - 40, 30)
-                pokelist.append((text, rect))
-                vertical_pos += 40
-        return pokelist
-
-    def screen_game_battle(self):
-       print("hello")
-       """ self.combat.display_characteristics()
-        self.combat.display_turn()
-        self.combat.draw_attack_button()
-        self.combat"""
-##################################screen add pokemon#####################################################
-    
-    def screen_add_pokemon(self):
-        print("add")
-
-
-#######################################################################################
-    def screen_pokedex(self):
-        if not self.pokedex:
-            print("Erreur : Pokedex non initialisé")
-            return
-        else:
-            self.pokedex.display_title()
-            self.pokedex.displayBlackButton()
-            self.pokedex.displayPokedex()
-            pygame.display.flip()
-
-    def event(self):
+def menu():
+    running = True
+    while running:
+        screen.fill(BLACK)
+        if background:
+            screen.blit(background, (0, 0))
+        
+        # Titre du jeu
+        title_text = font.render("Pokemon Game", True, WHITE)
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 100))
+        
+        # Boutons
+        start_button = draw_button("Jouer", WIDTH // 2 - 125, 300, GREEN)
+        quit_button = draw_button("Quitter", WIDTH // 2 - 125, 400, RED)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                
-                if self.state == "main menu":
-                    if self.rect1.collidepoint(event.pos):
-                        self.state = "player"
-                    elif self.rect2.collidepoint(event.pos):
-                        self.state = "pokedex"
-                    elif self.rect8.collidepoint(event.pos):
-                        self.state = "add_pokemon"
-                    elif self.rect3.collidepoint(event.pos):
-                        pygame.quit()
-                        sys.exit()
-                elif self.state == "pokemon":
-                    list = self.display_pokemon()
-                    for pokemon, button in list:
-                        if button.collidepoint(event.pos):
-                            self.pokemon = pokemon[0]
-                            self.player.choose_pokemon(self.pokemon)
-                            self.player.save_to_file(self.username)
-                elif self.state == "player":
-                    for char, button in self.buttons:
-                        if button.collidepoint(event.pos):
-                            self.username += char
-                            print(self.username)
-                    if self.rect5.collidepoint(event.pos):
-                        self.state = "main menu"
-                elif self.state == "score":
-                    if self.rect5.collidepoint(event.pos):
-                        self.state = "main menu"
-                elif self.state == "pokedex":
-                    return_main = self.pokedex.displayBlackButton()
-                    if return_main.collidepoint(event.pos):
-                        self.state = "main menu"
-            if event.type == pygame.KEYDOWN:
-                if self.state == "player":
-                    if event.key == pygame.K_SPACE:
-                        self.player.player_exists()
-                        self.state = "pokemon"
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.username = self.username[:-1]
-                        print(self.username)
-
-    def screen_transition(self):
-        if self.state == "main menu":
-            self.background = SCREEN_BACKGROUND["main_menu"]
-            self.screen.blit(self.background, (0, 0))
-            self.screen_main_menu()
-
-        elif self.state == "player":
-            self.background = SCREEN_BACKGROUND["main_menu"]
-            self.screen.blit(self.background, (0, 0))
-            self.screen_enter_player()
-
-        elif self.state == "add_pokemon":
-            self.background = SCREEN_BACKGROUND["main_menu"]
-            self.screen.blit(self.background, (0, 0))
-            self.screen_add_pokemon()
-
-        elif self.state == "pokemon":
-            self.background = SCREEN_BACKGROUND["main_menu"]
-            self.screen.blit(self.background, (0, 0))
-            self.screen_pokemon()
-
-        elif self.state == "battle":
-            self.background = random.choice(SCREEN_BACKGROUND["battle"])
-            self.screen.blit(self.background, (0, 0))
-            self.screen_game_battle()
-
-        elif self.state == "pokedex":
-            
-            self.background = SCREEN_BACKGROUND["score"]
-            self.screen.blit(self.background, (0, 0))
-            self.screen_pokedex()
-
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if start_button.collidepoint(event.pos):
+                    print("Lancement du jeu...")
+                    from game import Game  # Import ici pour éviter les boucles
+                    player_name = Player.ask_for_name()
+                    player = Player(player_name)
+                    if player.player_exists():
+                        print(f"Le joueur {player_name} existe déjà avec le Pokémon {player.pokemon['name']}.")
+                    else:
+                        chosen_pokemon = player.display_pokemon_list()
+                        if chosen_pokemon:
+                            player.set_pokemon(chosen_pokemon)
+                            player.save_to_file()
+                            print(f"Le joueur {player_name} a choisi {chosen_pokemon['name']} et a été enregistré.")
+                        else:
+                            print("Aucun Pokémon choisi.")
+                            sys.exit()
+                    pygame.mixer.music.stop()  # Arrêt de la musique du menu avant de lancer le jeu
+                    game = Game(WIDTH, HEIGHT, os.path.join(IMAGE_DIR, "background1.jpg"), player)
+                    game.run()
+                    running = False
+                elif quit_button.collidepoint(event.pos):
+                    pygame.quit()
+                    sys.exit()
+        
         pygame.display.flip()
 
-    def display(self):
-        self.screen_transition()
+menu()
+pygame.quit()

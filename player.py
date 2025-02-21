@@ -49,6 +49,7 @@ class Player:
         else:
             print("Entrée invalide. Veuillez entrer un numéro valide.")
             return None
+        
     def get_captured_pokemon(self):
     
         try:
@@ -93,6 +94,13 @@ class Player:
 
     def set_pokemon(self, pokemon):
         self.pokemon = pokemon
+        if not hasattr(self, "captured_pokemon"):
+            self.captured_pokemon = []
+        if pokemon not in self.captured_pokemon:
+            self.captured_pokemon.append(pokemon)
+
+        self.save_to_file()
+
 
     def change_background(self, image_path):
         self.background_image = pygame.image.load(image_path)
