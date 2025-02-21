@@ -1,0 +1,190 @@
+[
+    {
+        "ky": {
+            "pikachu": {
+                "count": 1,
+                "lifePoint": 0,
+                "level": 1,
+                "attack": 10,
+                "defence": 8,
+                "type1": "electric",
+                "type2": null
+            },
+            "rondoudou": {
+                "count": 1,
+                "lifePoint": 60,
+                "level": 1,
+                "attack": 50,
+                "defence": 25,
+                "type1": "normal",
+                "type2": null
+            },
+            "hoho": {
+                "count": 1,
+                "lifePoint": 124,
+                "level": 1,
+                "attack": 30,
+                "defence": 20,
+                "type1": "vol",
+                "type2": "feu"
+            }
+        }
+    },
+    {
+        "KHA": {
+            "carapuce": {
+                "count": 1,
+                "lifePoint": 120,
+                "level": 1,
+                "attack": 30,
+                "defence": 25,
+                "type1": "eau",
+                "type2": null
+            },
+            "pikachu": {
+                "count": 1,
+                "lifePoint": 7,
+                "level": 1,
+                "attack": 10,
+                "defence": 8,
+                "type1": "electric",
+                "type2": null
+            },
+            "artikodin": {
+                "count": 1,
+                "lifePoint": 175,
+                "level": 1,
+                "attack": 30,
+                "defence": 25,
+                "type1": "vol",
+                "type2": "glace"
+            }
+        }
+    },
+    {
+        "KA": {
+            "rondoudou": {
+                "count": 1,
+                "lifePoint": 60,
+                "level": 1,
+                "attack": 50,
+                "defence": 25,
+                "type1": "normal",
+                "type2": null
+            }
+        }
+    },
+    {
+        "N": {
+            "lugia": {
+                "count": 1,
+                "lifePoint": 175,
+                "level": 1,
+                "attack": 30,
+                "defence": 20,
+                "type1": "vol",
+                "type2": null
+            }
+        }
+    },
+    {
+        "KI": {
+            "ronflex": {
+                "count": 1,
+                "lifePoint": 210,
+                "level": 1,
+                "attack": 30,
+                "defence": 25,
+                "type1": "terre",
+                "type2": null
+            }
+        }
+    },
+    {
+        "K": {
+            "triopiqueur": {
+                "count": 1,
+                "lifePoint": 100,
+                "level": 1,
+                "attack": 30,
+                "defence": 25,
+                "type1": "terre",
+                "type2": null
+            },
+            "pikachu": {
+                "count": 1,
+                "lifePoint": 28,
+                "level": 1,
+                "attack": 10,
+                "defence": 8,
+                "type1": "electric",
+                "type2": null
+            }
+        }
+    },
+    {
+        "KY": {
+            "tadmorv": {
+                "count": 2,
+                "lifePoint": 80,
+                "level": 1,
+                "attack": 30,
+                "defence": 20,
+                "type1": "poison",
+                "type2": null
+            }
+        }
+    },
+    {
+        "kh": {
+            "lugia": {
+                "count": 1,
+                "lifePoint": 140,
+                "level": 1,
+                "attack": 30,
+                "defence": 20,
+                "type1": "vol",
+                "type2": null
+            }
+        }
+    },
+    {
+        "A": {
+            "lugia": {
+                "count": 1,
+                "lifePoint": 166,
+                "level": 1,
+                "attack": 30,
+                "defence": 20,
+                "type1": "vol",
+                "type2": null
+            }
+        }
+    },
+    {
+        "KJ": {
+            "ronflex": {
+                "count": 1,
+                "lifePoint": 190,
+                "level": 1,
+                "attack": 30,
+                "defence": 25,
+                "type1": "terre",
+                "type2": null
+            }
+        }
+    },
+    {
+        "kha": {
+            "hoho": {
+                "count": 1,
+                "lifePoint": 180,
+                "level": 1,
+                "attack": 30,
+                "defence": 20,
+                "type1": "vol",
+                "type2": "feu"
+            }
+        }
+    }
+]
